@@ -11,11 +11,11 @@ import Foundation
 class LHSChatCVCell: BaseChatCVCell {
     
     override open func chatBubbleFrame(model: BaseChatModel) -> CGRect {
-        return CGRect(x: 25, y: 0, width: model.size.width, height: model.size.height)
+        return CGRect(x: 10, y: 0, width: model.size.width, height: model.size.height)
     }
     
     override open func chatBubbleBkgColor() -> UIColor {
-        return UIColor(argb: 0xC3C3C3)
+        return UIColor(argb: 0xF8F8F8)
     }
     
 }

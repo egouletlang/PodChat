@@ -9,7 +9,7 @@
 import Foundation
 import PodUI
 
-private let MAX_WIDTH: CGFloat = 300
+private let MAX_WIDTH: CGFloat = 260
 private let STATUS_SIZE: CGFloat = 20
 private let PADDING: CGFloat = 5
 
@@ -85,25 +85,30 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate {
             container.layer.cornerRadius = 5
             container.backgroundColor = UIColor.white
             self.chatBubble.addSubview(container)
-            container.frame = CGRect(x: 5,
-                                     y: (model.models.first?.height ?? 0) + 5,
+            container.frame = CGRect(x: 8,
+                                     y: (model.models.first?.height ?? 0) + 8,
                                      width: model.size.width,
-                                     height: model.size.height - (model.models.first?.height ?? 0) + 5)
+                                     height: model.size.height - ((model.models.first?.height ?? 0) + 8))
         }
         
         let containerSize = model.size
-        var height: CGFloat = 5
+        var height: CGFloat = 8
         for (cell, model) in zip(cells, model.models) {
             cell.setData(model: model)
-            cell.frame = CGRect(x: 5, y: height, width: model.height, height: containerSize.width)
+            cell.frame = CGRect(x: 8, y: height, width: containerSize.width - 16, height: model.height)
             height += model.height
             self.chatBubble.addSubview(cell)
         }
         
+        self.chatBubble.frame = self.chatBubbleFrame(model: model)
+        self.status.frame = self.chatStatusFrame(model: model)
+        
         
     }
     open func updateSize(model: BaseChatModel) {
-        let availWidth = MAX_WIDTH
+        model.models = model.models.map() { $0.withPadding(l: 0, t: 0, r: 0, b: 0) }
+        
+        let availWidth = MAX_WIDTH - 16
         
         let cells = self.getCells(models: model.models)
         
@@ -115,8 +120,12 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate {
             reqWidth = (reqWidth > size.width) ? reqWidth : size.width
         }
         
-        let height = zip(cells, model.models).reduce(0) {$0 + $1.0.getDesiredSize(model: $1.1, forWidth: reqWidth).height }
-        model.setSize(size: CGSize(width: reqWidth + 10, height: height + 10))
+        var height: CGFloat = 0
+        for (cell, model) in zip(cells, model.models) {
+            model.height = cell.getDesiredSize(model: model, forWidth: reqWidth).height
+            height += model.height
+        }
+        model.setSize(size: CGSize(width: reqWidth + 16, height: height + 16))
     }
     
     //MARK: - BaseRowViewDelegate Methods -
