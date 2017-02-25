@@ -12,10 +12,17 @@ import BaseUtils
 
 open class BaseChatUIViewController: BaseUIViewController, BaseChatViewDelegate, BaseChatCVCellDelegate, BaseUILabelDelegate {
     
-    open let chatView = BaseChatView(frame: CGRect.zero)
+    open func createConfig() -> BaseChatViewConfig {
+        return BaseChatViewConfig()
+    }
+    
+    open var chatView: BaseChatView!
     
     override open func createLayout() {
         super.createLayout()
+        
+        chatView = BaseChatView(config: self.createConfig())
+        
         self.view.addSubview(chatView)
         chatView.baseUIViewDelegate = self
         chatView.baseChatViewDelegate = self

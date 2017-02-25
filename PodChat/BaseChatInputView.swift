@@ -18,7 +18,6 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
         self.init(frame: CGRect.zero)
         self.config = config
     }
-    open var config = BaseChatViewConfig()
     
     // MARK: - Speech -
     private let utteranceDetector = UtteranceDetector()
@@ -32,7 +31,7 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
         super.createAndAddSubviews()
         self.addSubview(input)
         input.layer.cornerRadius = 10
-        input.placeholder = config.sendBarPrompt
+        input.placeholder = (config as? BaseChatViewConfig)?.sendBarPrompt ?? ""
         input.delegate = self
         input.backgroundColor = UIColor.white
         input.returnKeyType = .send
@@ -68,7 +67,7 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
     open func submitTapped() {
         if self.input.text != nil {
             self.submitText()
-        } else if self.config.allowAudio {
+        } else if (self.config as? BaseChatViewConfig)?.allowAudio ?? false {
             self.detectUtterance()
         }
     }
@@ -98,7 +97,7 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
     
     public func SRH_newText(text: String?, final: Bool) {
         self.input.text = text
-        if final && config.audioAutoSend {
+        if final && (config as? BaseChatViewConfig)?.audioAutoSend ?? false {
             self.submitText()
         }
     }
@@ -106,10 +105,10 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
     public func setSendButtonImage() {
         ThreadHelper.checkedExecuteOnMainThread {
             if self.input.hasText {
-                self.submit.loadAsset(name: self.config.sendIconAsset)
+                self.submit.loadAsset(name: (self.config as? BaseChatViewConfig)?.sendIconAsset ?? "")
                 self.submit.isHidden = false
-            } else if self.config.allowAudio {
-                self.submit.loadAsset(name: self.config.audioIconAsset)
+            } else if (self.config as? BaseChatViewConfig)?.allowAudio ?? false {
+                self.submit.loadAsset(name: (self.config as? BaseChatViewConfig)?.audioIconAsset ?? "")
                 self.submit.isHidden = false
             } else {
                 self.submit.isHidden = true

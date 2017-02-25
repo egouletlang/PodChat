@@ -13,20 +13,12 @@ import BaseUtils
 private let DEFAULT_INSETS = UIEdgeInsetsMake(3, 5, 3, 5)
 open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BaseChatCVCellDelegate, BaseChatInputViewDelegate, BaseUILabelDelegate {
     
-    public convenience init(config: BaseChatViewConfig) {
-        self.init(frame: CGRect.zero)
-        
-        self.config = config
-    }
-    
-    open var config = BaseChatViewConfig()
-    
     open weak var baseChatViewDelegate: BaseChatViewDelegate?
     open weak var baseChatCVCellDelegate: BaseChatCVCellDelegate?
     
     private var collectionView: BaseUICollectionView!
     private var chatTypeStatus = BaseUIImageView(frame: CGRect.zero)
-    private var chatInputVIew = BaseChatInputView(frame: CGRect.zero)
+    private var chatInputVIew: BaseChatInputView!
     private var models = [BaseChatModel]()
     
     open func setText(text: String) {
@@ -60,6 +52,7 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
         chatTypeStatus.setContentMode(contentMode: .scaleAspectFit)
         chatTypeStatus.loadAsset(name: "sending_indicator")
         
+        chatInputVIew = BaseChatInputView(config: self.config)
         self.addSubview(chatInputVIew)
         chatInputVIew.backgroundColor = UIColor(argb: 0xFFFFFF)
         chatInputVIew.baseChatInputViewDelegate = self

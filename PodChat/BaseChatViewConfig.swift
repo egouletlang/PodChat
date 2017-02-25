@@ -7,15 +7,16 @@
 //
 
 import Foundation
+import PodUI
 
-public struct BaseChatViewConfig {
+open class BaseChatViewConfig: BaseUIViewConfig {
     
-    public var sendBarPrompt = "Say Something"
+    open var sendBarPrompt = "Say Something"
     
-    public var sendIconAsset = ""
+    open var sendIconAsset = ""
     
-    public var allowAudio = true
-    public var audioIconAsset = ""
-    public var audioAutoSend = true
+    open var allowAudio = true
+    open var audioIconAsset = ""
+    open var audioAutoSend = true
     
 }
