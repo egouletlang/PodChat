@@ -15,6 +15,13 @@ import BaseUtils
 
 open class BaseTableViewController: BaseUIViewController, BaseRowUITableViewDelegate, UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating {
     
+    convenience public init(models: [BaseRowModel]) {
+        self.init()
+        self.initialModels = models
+    }
+    
+    private var initialModels = [BaseRowModel]()
+    
     public let tableView = BaseRowUITableView(frame: CGRect.zero)
     private let searchController = UISearchController(searchResultsController: nil)
     private var searchMode = false
@@ -53,7 +60,7 @@ open class BaseTableViewController: BaseUIViewController, BaseRowUITableViewDele
     }
     
     open func createModels() -> [BaseRowModel] {
-        return []
+        return self.initialModels
     }
     
     open func tapped(model: BaseRowModel, view: BaseRowView) {}
@@ -77,17 +84,17 @@ open class BaseTableViewController: BaseUIViewController, BaseRowUITableViewDele
     }
     
     // MARK: - Search Bar Delegate -
-    public func updateSearchResults(for searchController: UISearchController) {
+    open func updateSearchResults(for searchController: UISearchController) {
         let index = searchController.searchBar.selectedScopeButtonIndex
         filterContentForSearchText(scope: searchController.searchBar.scopeButtonTitles?[index], text: searchController.searchBar.text)
     }
-    public func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
+    open func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
         filterContentForSearchText(scope: searchBar.scopeButtonTitles?[selectedScope], text: searchBar.text)
     }
-    public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+    open func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         self.frameUpdate()
     }
-    public func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+    open func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         self.frameUpdate()
     }
     
@@ -96,7 +103,7 @@ open class BaseTableViewController: BaseUIViewController, BaseRowUITableViewDele
     }
     
     open func addSearchBarHeader() -> Bool {
-        return true
+        return false
     }
     
     private func _getScopes() -> [String]? {

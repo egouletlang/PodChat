@@ -61,7 +61,7 @@ open class AsynchronousRowView: LabelRowView {
         }
         super.setData(model: model)
     }
-    override open func containerTapped() {
+    override open func containerTapped(_ sender: UITapGestureRecognizer) {
         if let m = model as? AsynchronousRowModel {
             if m.state != .ACTIVE {
                 m.shouldAutoStart = true

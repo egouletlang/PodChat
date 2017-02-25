@@ -52,12 +52,13 @@ open class BaseUIViewController: UIViewController, BaseUIViewDelegate {
     }
     open var effectiveTopLayoutGuide: CGFloat {
         get {
-            return navBarHeight + statusBarHeight
+            return (self.navigationController != nil) ? (navBarHeight + statusBarHeight) : 0
         }
     }
     open var effectiveBottomLayoutGuide: CGFloat {
         get {
-            return self.view.frame.height - keyboardHeight
+            let diff = UIScreen.main.bounds.height - self.view.frame.height
+            return self.view.frame.height - keyboardHeight + (keyboardHeight == 0 ? 0 : diff)
         }
     }
     open var isPortraitMode: Bool {
@@ -115,7 +116,7 @@ open class BaseUIViewController: UIViewController, BaseUIViewDelegate {
     }
     
     open func initialize() {
-        if self.shouldRespondToKeyboard() {
+        if shouldRespondToKeyboard() {
             NotificationCenter.default.addObserver(self, selector: #selector(BaseUIViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
             NotificationCenter.default.addObserver(self, selector: #selector(BaseUIViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
         }
@@ -129,6 +130,7 @@ open class BaseUIViewController: UIViewController, BaseUIViewDelegate {
     open func defaultBackgroundColor() -> UIColor {
         return UIColor.clear
     }
+    
     
     // MARK: - Foreground Event -
     open func isVisible() -> Bool {
@@ -208,11 +210,13 @@ open class BaseUIViewController: UIViewController, BaseUIViewDelegate {
     open func addDismissButton() -> Bool {
         return true
     }
+    
     open func shouldRespondToKeyboard() -> Bool {
         return false
     }
     
-    var keyboardHeight: CGFloat = 0
+    
+    open var keyboardHeight: CGFloat = 0
     open func keyboardWillShow(_ notification: NSNotification) {
         if let keyboardSize: CGFloat = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue.height {
             keyboardHeight = keyboardSize

@@ -9,10 +9,10 @@
 import Foundation
 import BaseUtils
 
-class OverlayPresentationUIViewController: BaseUIViewController {
-
+open class OverlayPresentationUIViewController: BaseUIViewController {
+    
     //MARK: - Navigation Items Callbacks -
-    func cancelTapped() {
+    open func cancelTapped() {
         ThreadHelper.checkedExecuteOnMainThread(){
             if let nav = self.navigationController as? OverlayUINavigationController {
                 nav.cleanOrSave()
@@ -24,12 +24,12 @@ class OverlayPresentationUIViewController: BaseUIViewController {
     
     //MARK: - BaseUIViewController overrides -
     
-    override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         declareSize()
     }
     
-    override func viewWillLayoutSubviews() {
+    override open func viewWillLayoutSubviews() {
         if let nav = self.navigationController as? OverlayUINavigationController,
             let size = nav.getContentFrameSize() {
             self.view.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
@@ -39,14 +39,14 @@ class OverlayPresentationUIViewController: BaseUIViewController {
     
     // MARK: - Layout -
     
-    var requiredSize: CGSize? {
+    open var requiredSize: CGSize? {
         didSet {
             if sameSize(requiredSize, oldValue) { return }
             self.declareSize()
         }
     }
 
-    func setSizeIfLarger(size: CGSize) {
+    open func setSizeIfLarger(size: CGSize) {
         if let (update, newSize) = (self.navigationController as? OverlayUINavigationController)?.isLargerSizeRequired(size: size) {
             if update {
                 self.requiredSize = newSize
@@ -56,7 +56,7 @@ class OverlayPresentationUIViewController: BaseUIViewController {
         }
     }
     
-    func declareSize() {
+    open func declareSize() {
         if let nav = self.navigationController as? OverlayUINavigationController,
             let reqSize = requiredSize {
                 if reqSize.equalTo(CGSize.zero) {

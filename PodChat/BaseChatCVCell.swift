@@ -13,7 +13,7 @@ private let MAX_WIDTH: CGFloat = 260
 private let STATUS_SIZE: CGFloat = 20
 private let PADDING: CGFloat = 5
 
-open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate {
+open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate, BaseUILabelDelegate {
     
     //MARK: - Constructors -
     open class func build(model: BaseChatModel) -> BaseChatCVCell {
@@ -44,14 +44,27 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate {
         chatBubble.layer.cornerRadius = 15
         chatBubble.backgroundColor = self.chatBubbleBkgColor()
         chatBubble.passThroughDefault = true
+        chatBubble.clipsToBounds = true
         
         self.contentView.addSubview(status)
-        status.layer.cornerRadius = 10
-        status.backgroundColor = UIColor.blue
+        status.layer.cornerRadius = STATUS_SIZE / 2
+        status.loadAsset(name: "sent_indicator")
+        status.isHidden = true
     }
     
     //MARK: - BaseChatViewDelegate -
     open weak var baseChatViewDelegate: BaseChatCVCellDelegate?
+    
+    open weak var baseUILabelDelegate: BaseUILabelDelegate?
+    public func interceptUrl(_ url: URL) -> Bool {
+        return self.baseUILabelDelegate?.interceptUrl?(url) ?? false
+    }
+    public func active() {
+        self.baseUILabelDelegate?.active?()
+    }
+    public func inactive() {
+        self.baseUILabelDelegate?.inactive?()
+    }
     
     //MARK: - LHS vs RHS methods -
     open func chatBubbleBkgColor() -> UIColor {
@@ -67,7 +80,12 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate {
     
     //MARK: - Helper Methods -
     private func getCells(models: [BaseRowModel]) -> [BaseRowView] {
-        return models.map() { BaseRowModel.build(id: $0.getId()) }
+        return models.map() { (model) in
+            let row = BaseRowModel.build(id: model.getId())
+            row.baseRowViewDelegate = self
+            row.baseUILabelDelegate = self
+            return row
+        }
     }
     
     //MARK: - Data Methods -
@@ -87,8 +105,8 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate {
             self.chatBubble.addSubview(container)
             container.frame = CGRect(x: 8,
                                      y: (model.models.first?.height ?? 0) + 8,
-                                     width: model.size.width,
-                                     height: model.size.height - ((model.models.first?.height ?? 0) + 8))
+                                     width: model.size.width - 16,
+                                     height: model.size.height - ((model.models.first?.height ?? 0) + 16))
         }
         
         let containerSize = model.size
@@ -100,8 +118,9 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate {
             self.chatBubble.addSubview(cell)
         }
         
-        self.chatBubble.frame = self.chatBubbleFrame(model: model)
         self.status.frame = self.chatStatusFrame(model: model)
+        self.chatBubble.frame = self.chatBubbleFrame(model: model)
+        
         
         
     }

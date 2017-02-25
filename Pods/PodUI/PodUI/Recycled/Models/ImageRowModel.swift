@@ -20,6 +20,8 @@ open class ImageRowModel: BaseRowModel {
     }
     
     open var imageUrl: String?
+    
+    open var ratio: CGFloat = 1 // h / w
     open var imageHeight: CGFloat = 0
     open var imageMargins = Rect<CGFloat>(0, 0, 0, 0)
     
@@ -31,12 +33,19 @@ open class ImageRowModel: BaseRowModel {
         self.setImage(height: height)
         return self
     }
+    open func withImage(ratio: CGFloat) -> ImageRowModel {
+        self.setImage(ratio: ratio)
+        return self
+    }
     open func withImage(margins m: Rect<CGFloat>?) -> ImageRowModel {
         self.setImage(margins: m)
         return self
     }
     open func setImage(height: CGFloat) {
         self.imageHeight = height
+    }
+    open func setImage(ratio: CGFloat) {
+        self.ratio = ratio
     }
     open func setImage(margins m: Rect<CGFloat>?) {
         self.imageMargins = m ?? Rect<CGFloat>(0,0,0,0)

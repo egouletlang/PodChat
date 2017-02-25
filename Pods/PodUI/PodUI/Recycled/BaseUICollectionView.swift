@@ -42,6 +42,13 @@ open class BaseUICollectionView: UICollectionView {
         }
     }
     
+    open func addTap(_ view: UIView, selector: Selector) {
+        let tapGesture = UITapGestureRecognizer(target: self, action: selector)
+        tapGesture.numberOfTapsRequired = 1
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(tapGesture)
+    }
+    
     open func initialize() {}
     open func createAndAddSubviews() {}
     open func frameUpdate() {}

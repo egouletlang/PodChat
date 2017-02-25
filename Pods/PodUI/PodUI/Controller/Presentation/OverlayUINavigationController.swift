@@ -8,15 +8,13 @@
 
 import Foundation
 
-
-
-class OverlayUINavigationController: BaseUINavigationController, UIViewControllerTransitioningDelegate, OverlayPresentationControllerDelegate {
+open class OverlayUINavigationController: BaseUINavigationController, UIViewControllerTransitioningDelegate, OverlayPresentationControllerDelegate {
     
-    func allowVcStackTransition() -> Bool {
+    open func allowVcStackTransition() -> Bool {
         return false
     }
     
-    override func initialize() {
+    override open func initialize() {
         super.initialize()
         
         self.modalPresentationStyle = .custom
@@ -26,7 +24,7 @@ class OverlayUINavigationController: BaseUINavigationController, UIViewControlle
     var servicePresentationControllerLayout: OverlayPresentationController?
     
     // MARK: - UIViewControllerTransitioningDelegate methods -
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+    open func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         
         if presented == self {
             servicePresentationControllerLayout = OverlayPresentationController(presentedViewController: presented, presenting: source)
@@ -38,7 +36,7 @@ class OverlayUINavigationController: BaseUINavigationController, UIViewControlle
         
         return nil
     }
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    open func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         if presented == self {
             let allowVcStackTransition = !self.allowVcStackTransition()
             return OverlayPresentationAnimationController(isPresenting: true, allowSpringyAnimation: allowVcStackTransition)
@@ -47,7 +45,7 @@ class OverlayUINavigationController: BaseUINavigationController, UIViewControlle
             return nil
         }
     }
-    func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    open func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         
         if dismissed == self {
             let allowVcStackTransition = !self.allowVcStackTransition()
@@ -60,26 +58,26 @@ class OverlayUINavigationController: BaseUINavigationController, UIViewControlle
     
     
     // MARK:  - Size -
-    func presentationHook() {
+    open func presentationHook() {
         
     }
-    func getMinBorderSize() -> CGSize {
+    open func getMinBorderSize() -> CGSize {
         return OverlayPresentationController.DEFAULT_MIN_BORDER_SIZE
     }
-    func setRequiredSize(size: CGSize) {
+    open func setRequiredSize(size: CGSize) {
         // Compare the container size to the required frame size to calculate the insets
         if let pc = servicePresentationControllerLayout {
             pc.setRequiredSize(size: size, borderSize: getMinBorderSize())
             pc.containerView?.setNeedsLayout()
         }
     }
-    func setKeyboardHeight(height: CGFloat) {
+    open func setKeyboardHeight(height: CGFloat) {
         if let pc = servicePresentationControllerLayout {
             pc.setKeyboardHeight(keyboardHeight: height)
             pc.containerView?.setNeedsLayout()
         }
     }
-    func setNoRequiredSize() {
+    open func setNoRequiredSize() {
         if let pc = servicePresentationControllerLayout {
             let w = UIScreen.main.bounds.width
             let h = UIScreen.main.bounds.height
@@ -88,7 +86,7 @@ class OverlayUINavigationController: BaseUINavigationController, UIViewControlle
             pc.containerView?.setNeedsLayout()
         }
     }
-    func isLargerSizeRequired(size: CGSize) -> (Bool, CGSize) {
+    open func isLargerSizeRequired(size: CGSize) -> (Bool, CGSize) {
         if let currSize = servicePresentationControllerLayout?.frameOfPresentedViewInContainerView.size {
             //Do the bounds contain this?
             
@@ -98,20 +96,20 @@ class OverlayUINavigationController: BaseUINavigationController, UIViewControlle
         }
         return (true, size)
     }
-    func getContentFrameSize() -> CGSize? {
+    open func getContentFrameSize() -> CGSize? {
         return servicePresentationControllerLayout?.frameOfPresentedViewInContainerView.size
     }
     
     
     // MARK: - OverlayPresentationControllerDelegate -
-    func cleanOrSave() {
+    open func cleanOrSave() {
         cleanUp()
     }
-    func cleanUp() {
+    open func cleanUp() {
         self.servicePresentationControllerLayout = nil
     }
     
-    override func dismiss(animated flag: Bool, completion: (() -> Void)?) {
+    override open func dismiss(animated flag: Bool, completion: (() -> Void)?) {
         self.cleanUp()
         super.dismiss(animated: flag, completion: completion)
     }

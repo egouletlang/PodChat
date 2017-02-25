@@ -22,7 +22,11 @@ open class ImageRowView: BaseRowView {
     override open func frameUpdate() {
         super.frameUpdate()
         
-        let cardImageHeight = (self.model as? ImageRowModel)?.imageHeight ?? self.contentView.frame.width
+        var cardImageHeight = (self.model as? ImageRowModel)?.imageHeight ?? 0
+        if cardImageHeight == 0 {
+            let ratio = (model as? ImageRowModel)?.ratio ?? 1
+            cardImageHeight = ratio * self.contentView.frame.width
+        }
         let cardImageMargins = (self.model as? ImageRowModel)?.imageMargins ?? Rect<CGFloat>(0, 0, 0, 0)
         
         self.imageView.frame = CGRect(
@@ -34,15 +38,21 @@ open class ImageRowView: BaseRowView {
     
     override open func setData(model: BaseRowModel) {
         super.setData(model: model)
-        if let m = model as? CardRowModel {
+        if let m = model as? ImageRowModel {
             self.imageView.load(str: m.imageUrl)
         }
     }
     
     override open func getDesiredSize(model: BaseRowModel, forWidth w: CGFloat) -> CGSize {
         
-        let cardImageHeight = (model as? CardRowModel)?.imageHeight ?? w
-        let cardImageMargins = (model as? CardRowModel)?.imageMargins ?? Rect<CGFloat>(0, 0, 0, 0)
+        var cardImageHeight = (model as? ImageRowModel)?.imageHeight ?? 0
+        
+        if cardImageHeight == 0 {
+            let ratio = (model as? ImageRowModel)?.ratio ?? 1
+            cardImageHeight = ratio * w
+        }
+        
+        let cardImageMargins = (model as? ImageRowModel)?.imageMargins ?? Rect<CGFloat>(0, 0, 0, 0)
         
         return CGSize(width: w,
                       height: cardImageHeight + cardImageMargins.top + cardImageMargins.bottom)

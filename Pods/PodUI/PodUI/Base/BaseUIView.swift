@@ -19,7 +19,7 @@ open class BaseUIView: UIView {
         mayResign = false
     }
     
-    func setAllowResign() {
+    open func setAllowResign() {
         mayResign = true
     }
     
@@ -80,11 +80,17 @@ open class BaseUIView: UIView {
     }
     
     // MARK: - View Controller Functionality Delegate -
-    weak var baseUIViewDelegate: BaseUIViewDelegate?
+    open weak var baseUIViewDelegate: BaseUIViewDelegate? {
+        didSet {
+            for subview in self.subviews {
+                (subview as? BaseUIView)?.baseUIViewDelegate = self.baseUIViewDelegate
+            }
+        }
+    }
     
     // MARK: - Touch -
     open var passThroughDefault = false
-    func forcePassThroughHitTest() -> Bool {
+    open func forcePassThroughHitTest() -> Bool {
         return passThroughDefault
     }
     override open func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {

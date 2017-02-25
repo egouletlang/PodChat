@@ -10,6 +10,7 @@ import Foundation
 import PodImage
 import BaseUtils
 
+private let instance = BaseUIImageView()
 open class BaseUIImageView: BaseUIView {
     
     private let imageView = UIImageView(frame: CGRect.zero)
@@ -24,6 +25,10 @@ open class BaseUIImageView: BaseUIView {
         super.frameUpdate()
         self.imageView.frame = self.bounds.insetBy(dx: padding.left + padding.right, dy: padding.top + padding.bottom)
         self.imageView.frame.origin = CGPoint(x: padding.left, y: padding.top)
+    }
+    
+    open func setContentMode(contentMode: UIViewContentMode) {
+        imageView.contentMode = contentMode
     }
     
     open var padding = Rect<CGFloat>(0, 0, 0, 0)

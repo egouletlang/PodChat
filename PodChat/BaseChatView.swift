@@ -11,13 +11,27 @@ import PodUI
 import BaseUtils
 
 private let DEFAULT_INSETS = UIEdgeInsetsMake(3, 5, 3, 5)
-open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BaseChatCVCellDelegate, BaseChatInputViewDelegate {
+open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BaseChatCVCellDelegate, BaseChatInputViewDelegate, BaseUILabelDelegate {
+    
+    public convenience init(config: BaseChatViewConfig) {
+        self.init(frame: CGRect.zero)
+        
+        self.config = config
+    }
+    
+    open var config = BaseChatViewConfig()
     
     open weak var baseChatViewDelegate: BaseChatViewDelegate?
+    open weak var baseChatCVCellDelegate: BaseChatCVCellDelegate?
     
     private var collectionView: BaseUICollectionView!
+    private var chatTypeStatus = BaseUIImageView(frame: CGRect.zero)
     private var chatInputVIew = BaseChatInputView(frame: CGRect.zero)
     private var models = [BaseChatModel]()
+    
+    open func setText(text: String) {
+        self.chatInputVIew.setText(text: text)
+    }
     
     override open func createAndAddSubviews() {
         super.createAndAddSubviews()
@@ -42,19 +56,22 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
         collectionView.backgroundColor = UIColor.clear
         self.addTap(collectionView, selector: #selector(BaseChatView.dismissKeyboard))
         
+        self.addSubview(chatTypeStatus)
+        chatTypeStatus.setContentMode(contentMode: .scaleAspectFit)
+        chatTypeStatus.loadAsset(name: "sending_indicator")
         
         self.addSubview(chatInputVIew)
-        chatInputVIew.backgroundColor = UIColor(argb: 0x666666)
+        chatInputVIew.backgroundColor = UIColor(argb: 0xFFFFFF)
         chatInputVIew.baseChatInputViewDelegate = self
+        
     }
     
     override open func frameUpdate() {
         super.frameUpdate()
         
         self.chatInputVIew.frame = CGRect(x: 0, y: self.frame.height - 50, width: self.frame.width, height: 50)
-        
+        self.chatTypeStatus.frame = CGRect(x: 0, y: self.frame.height - 50, width: 80, height: 40)
         self.collectionView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height - 50)
-        
         
         collectionView?.collectionViewLayout.invalidateLayout()
         self.collectionView?.reloadData()
@@ -70,6 +87,7 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: model.getId(), for: indexPath) as? BaseChatCVCell {
             
             cell.baseChatViewDelegate = self
+            cell.baseUILabelDelegate = self
             cell.setData(model: model)
             
             return cell
@@ -97,29 +115,77 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
     }
     
     open func addServerMessage(text: String?, models: [BaseRowModel]?) {
+        if (text == nil && (models == nil || models!.isEmpty)) { return }
         self.addModel(model: BaseChatModel.buildServerMessage(text: text, models: models))
     }
     open func addUserMessage(text: String?, models: [BaseRowModel]?) {
+        if (text == nil && (models == nil || models!.isEmpty)) { return }
         self.addModel(model: BaseChatModel.buildUserMessage(text: text, models: models))
     }
     
     open func messageSent(indexPath: IndexPath) {
-        if let cell = self.collectionView.cellForItem(at: indexPath) as? BaseChatCVCell {
-            cell.status.backgroundColor = UIColor.red
+        if let model = models.get(indexPath.item) {
+            model.status = .Sent
+        }
+        if let cell = self.collectionView.cellForItem(at: indexPath) as? RHSChatCVCell {
+            cell.status.isHidden = false
         }
     }
     
-    public func active(view: BaseRowView) {}
-    public func tapped(model: BaseRowModel, view: BaseRowView) {}
-    public func longPressed(model: BaseRowModel, view: BaseRowView) {}
+    public func active(view: BaseRowView) {
+        self.baseChatCVCellDelegate?.active(view: view)
+    }
+    public func tapped(model: BaseRowModel, view: BaseRowView) {
+        self.baseChatCVCellDelegate?.tapped(model: model, view: view)
+    }
+    public func longPressed(model: BaseRowModel, view: BaseRowView) {
+        self.baseChatCVCellDelegate?.longPressed(model: model, view: view)
+    }
     
     public func dismissKeyboard() {
         self.chatInputVIew.dismiss()
     }
     
     public func submit(text: String) {
+        if (text.isEmpty) {
+            return
+        }
+        
         let indexPath = IndexPath(row: self.models.count, section: 0)
         self.addUserMessage(text: text, models: nil)
         self.baseChatViewDelegate?.send(text: text, index: indexPath)
     }
+    open func showTyping(show: Bool) {
+        ThreadHelper.executeOnMainThread {
+            
+            UIView.animate(withDuration: 0.3) {
+                if (show) {
+                    self.chatTypeStatus.frame = CGRect(x: 0, y: self.frame.height - 90, width: 80, height: 40)
+                    self.collectionView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height - 90)
+                } else {
+                    self.chatTypeStatus.frame = CGRect(x: 0, y: self.frame.height - 50, width: 80, height: 40)
+                    self.collectionView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height - 50)
+                }
+            }
+                self.collectionView.scrollToItem(at: IndexPath(item: self.models.count - 1, section: 0), at: .bottom, animated: false)
+//            }
+            
+            
+            
+        }
+    }
+    
+    
+    //MARK: - BaseUILabelDelegate Methods -
+    open weak var baseUILabelDelegate: BaseUILabelDelegate?
+    public func interceptUrl(_ url: URL) -> Bool {
+        return self.baseUILabelDelegate?.interceptUrl?(url) ?? false
+    }
+    public func active() {
+        self.baseUILabelDelegate?.active?()
+    }
+    public func inactive() {
+        self.baseUILabelDelegate?.inactive?()
+    }
+    
 }

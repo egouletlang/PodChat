@@ -9,7 +9,7 @@
 import Foundation
 
 private let D_CORNER_RADIUS: CGFloat = 2
-private let D_MIN_BORDER_SIZE = CGSize(width: 0, height: 20)
+private let D_MIN_BORDER_SIZE = CGSize(width: 0, height: 0)
 
 protocol PresentationBackgroundBlurDelegate: NSObjectProtocol {
     func dimTapped()
@@ -111,7 +111,7 @@ class OverlayPresentationController: UIPresentationController, PresentationBackg
                     self.presentingViewController.view.center.y -= 10
                     self.presentingViewController.view.alpha = 0.7
                 }
-                self.blurBackgroundView.alpha = (self.allowVcStackTransition) ? 0.1 : 0.5
+                self.blurBackgroundView.alpha = 0.8
             }, completion:nil)
         }
     }

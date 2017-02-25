@@ -8,8 +8,10 @@
 
 import Foundation
 
-protocol BaseUILabelDelegate: NSObjectProtocol {
-    func interceptUrl(_ url: URL)->Bool
-    func active()->Void
-    func inactive()->Void
+@objc
+public protocol BaseUILabelDelegate: NSObjectProtocol {
+    @objc optional func interceptUrl(_ url: URL)->Bool
+    @objc optional func active()->Void
+    @objc optional func inactive()->Void
 }
+

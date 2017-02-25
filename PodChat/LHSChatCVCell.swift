@@ -10,6 +10,11 @@ import Foundation
 
 class LHSChatCVCell: BaseChatCVCell {
     
+    override func createLayout() {
+        super.createLayout()
+        self.status.isHidden = true
+    }
+    
     override open func chatBubbleFrame(model: BaseChatModel) -> CGRect {
         return CGRect(x: 10, y: 0, width: model.size.width, height: model.size.height)
     }

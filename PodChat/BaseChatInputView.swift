@@ -9,35 +9,68 @@
 import Foundation
 import PodUI
 import BaseUtils
+import PodSpeech
 
-open class BaseChatInputView: BaseUIView, UITextFieldDelegate {
+open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognitionHelperDelegate {
+    
+    // MARK: - Initializer with a config object -
+    public convenience init(config: BaseChatViewConfig) {
+        self.init(frame: CGRect.zero)
+        self.config = config
+    }
+    open var config = BaseChatViewConfig()
+    
+    // MARK: - Speech -
+    private let utteranceDetector = UtteranceDetector()
+    
+    // MARK: - UI -
     private let input = BaseUITextField(frame: CGRect.zero)
     private let submit = BaseUIImageView(frame: CGRect.zero)
     
-    open func dismiss() {
-        input.resignFirstResponder()
-    }
-    
-    open weak var baseChatInputViewDelegate: BaseChatInputViewDelegate?
-    
+    // MARK: - Lifecycle - 
     open override func createAndAddSubviews() {
         super.createAndAddSubviews()
         self.addSubview(input)
         input.layer.cornerRadius = 10
-        input.placeholder = "Say Something"
+        input.placeholder = config.sendBarPrompt
         input.delegate = self
         input.backgroundColor = UIColor.white
         input.returnKeyType = .send
+        input.addTarget(self, action: #selector(BaseChatInputView.textFieldDidChange(_:)), for: .editingChanged)
+        
         self.addSubview(submit)
-        submit.layer.cornerRadius = 10
         self.addTap(submit, selector: #selector(BaseChatInputView.submitText))
-        submit.backgroundColor = UIColor.black
+        
+        self.setSendButtonImage()
+        
+        utteranceDetector.speechRecognitionHelperDelegate = self
     }
     
     open override func frameUpdate() {
         super.frameUpdate()
         input.frame = CGRect(x: 8, y: 8, width: self.frame.width - 24 - 20, height: self.frame.height - 16)
-        submit.frame = CGRect(x: self.frame.width - 28, y: (self.frame.height - 20) / 2, width: 20, height: 20)
+        submit.frame = CGRect(x: self.frame.width - 38, y: (self.frame.height - 30) / 2, width: 30, height: 30)
+    }
+    
+    // MARK: - Resign First Responder -
+    open func dismiss() {
+        input.resignFirstResponder()
+    }
+    
+    open func setText(text: String) {
+        ThreadHelper.checkedExecuteOnMainThread {
+            self.input.text = text
+        }
+    }
+    
+    open weak var baseChatInputViewDelegate: BaseChatInputViewDelegate?
+    
+    open func submitTapped() {
+        if self.input.text != nil {
+            self.submitText()
+        } else if self.config.allowAudio {
+            self.detectUtterance()
+        }
     }
     
     open func submitText() {
@@ -51,9 +84,53 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate {
         
     }
     
+    open func detectUtterance() {
+        if utteranceDetector.isAvailable() {
+            utteranceDetector.authorize() { (vc: UIViewController?) in
+                if vc != nil {
+                    self.baseUIViewDelegate?.presentVC?(vc!, animated: true)
+                } else {
+                    self.utteranceDetector.start()
+                }
+            }
+        }
+    }
+    
+    public func SRH_newText(text: String?, final: Bool) {
+        self.input.text = text
+        if final && config.audioAutoSend {
+            self.submitText()
+        }
+    }
+    
+    public func setSendButtonImage() {
+        ThreadHelper.checkedExecuteOnMainThread {
+            if self.input.hasText {
+                self.submit.loadAsset(name: self.config.sendIconAsset)
+                self.submit.isHidden = false
+            } else if self.config.allowAudio {
+                self.submit.loadAsset(name: self.config.audioIconAsset)
+                self.submit.isHidden = false
+            } else {
+                self.submit.isHidden = true
+            }
+        }
+    }
+    
     public func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
-        submitText()
-        return true
+        if self.input.hasText {
+            submitText()
+        }
+        return self.input.hasText
+    }
+    
+    private var hasText = false
+    public func textFieldDidChange(_ textField: UITextField) {
+        
+        if hasText != self.input.hasText {
+            hasText = self.input.hasText
+            self.setSendButtonImage()
+        }
     }
     
 }

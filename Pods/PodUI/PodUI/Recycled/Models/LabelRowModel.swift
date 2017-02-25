@@ -37,7 +37,7 @@ open class LabelRowModel: BaseRowModel {
         return LabelRowModel()
             .withTitle(str: formattedTitle, textSize: 12)
             .withHeight(height: height)
-            .withPadding(l: 15, t: 5)
+            .withPadding(l: 15, t: 15, b: 0)
             .withBorders(t: topBorder, b: bottomBorder)
             .withBackgroundColor(color: BACKGROUND_COLOR) as! LabelRowModel
     }
@@ -59,7 +59,7 @@ open class LabelRowModel: BaseRowModel {
             .declareIsFooter()
             .withTitle(str: formattedTitle, textSize: 12)
             .withHeight(height: height)
-            .withPadding(l: 15, b: 5)
+            .withPadding(l: 15, t: 0, b: 15)
             .withBorders(t: topBorder, b: bottomBorder)
             .withBackgroundColor(color: BACKGROUND_COLOR) as! LabelRowModel
     }
@@ -84,6 +84,18 @@ open class LabelRowModel: BaseRowModel {
         self.isFooter = true
         return self
     }
+    
+    
+    open var cornerRadius: CGFloat = 0
+    open func withCornerRadius(radius: CGFloat) -> LabelRowModel {
+        self.setCornerRadiusTo(radius: radius)
+        return self
+    }
+    
+    open func setCornerRadiusTo(radius: CGFloat) {
+        self.cornerRadius = radius
+    }
+    
     
     // MARK: - Title Label -
     open var title = LabelInformation()

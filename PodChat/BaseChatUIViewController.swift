@@ -10,16 +10,17 @@ import Foundation
 import PodUI
 import BaseUtils
 
-open class BaseChatUIViewController: BaseUIViewController, BaseChatViewDelegate {
+open class BaseChatUIViewController: BaseUIViewController, BaseChatViewDelegate, BaseChatCVCellDelegate, BaseUILabelDelegate {
     
-    private let chatView = BaseChatView(frame: CGRect.zero)
-    
+    open let chatView = BaseChatView(frame: CGRect.zero)
     
     override open func createLayout() {
         super.createLayout()
         self.view.addSubview(chatView)
+        chatView.baseUIViewDelegate = self
         chatView.baseChatViewDelegate = self
-        
+        chatView.baseUILabelDelegate = self
+        chatView.baseChatCVCellDelegate = self
     }
     
     override open func frameUpdate() {
@@ -34,11 +35,10 @@ open class BaseChatUIViewController: BaseUIViewController, BaseChatViewDelegate 
         return true
     }
     
-    public func send(text: String, index: IndexPath) {
-        print("\(text) \(index)")
-        ThreadHelper.delay(sec: 0.5, mainThread: true) {
-            self.chatView.messageSent(indexPath: index)
-        }
-    }
+    open func send(text: String, index: IndexPath) {}
+    
+    open func active(view: BaseRowView) {}
+    open func tapped(model: BaseRowModel, view: BaseRowView) {}
+    open func longPressed(model: BaseRowModel, view: BaseRowView) {}
     
 }

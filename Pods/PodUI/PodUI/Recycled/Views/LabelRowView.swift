@@ -76,6 +76,15 @@ open class LabelRowView: BaseRowView {
         }
     }
     
+    override open func containerTapped(_ sender: UITapGestureRecognizer) {
+        let location = sender.location(in: titleLabel)
+        if  self.titleLabel.willConsumeLocationTap(location) ||
+            self.subTitleLabel.willConsumeLocationTap(location) ||
+            self.detailsLabel.willConsumeLocationTap(location) {
+            return
+        }
+        super.containerTapped(sender)
+    }
     
     open func leftEdge() -> CGFloat {
         return 0
@@ -118,6 +127,12 @@ open class LabelRowView: BaseRowView {
                         (subTitleMargins.top + subTitleSize.height + subTitleMargins.bottom) +
                         (detailsMargins.top + detailsSize.height + detailsMargins.bottom))
         
+    }
+    
+    override open func baseUILabelDelegateDidSet() {
+        titleLabel.delegate = self.baseUILabelDelegate
+        subTitleLabel.delegate = self.baseUILabelDelegate
+        detailsLabel.delegate = self.baseUILabelDelegate
     }
     
 }

@@ -1,0 +1,6 @@
+framework module PodSpeech {
+  umbrella header "PodSpeech-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -54,7 +54,7 @@ open class BaseRowView: BaseUIView {
     override open func addGestureRecognition() {
         super.addGestureRecognition()
         if handleGesturesAutomatically() {
-            self.addTap(self, selector: #selector(BaseRowView.containerTapped))
+            self.addTap(self, selector: #selector(BaseRowView.containerTapped(_:)))
             self.addLongPress(self, selector: "containerLongPressed")
         }
     }
@@ -128,7 +128,7 @@ open class BaseRowView: BaseUIView {
         return true
     }
     
-    open func containerTapped() {
+    open func containerTapped(_ sender: UITapGestureRecognizer) {
         self.baseRowViewDelegate?.active(view: self)
         if let m = self.model, m.clickResponse != nil {
             self.baseRowViewDelegate?.tapped(model: m, view: self)
@@ -159,4 +159,14 @@ open class BaseRowView: BaseUIView {
     open func getDesiredSize(model: BaseRowModel, forWidth w: CGFloat) -> CGSize {
         return CGSize(width: w, height: model.getContainerHeight())
     }
+    
+    
+    open weak var baseUILabelDelegate: BaseUILabelDelegate? {
+        didSet {
+            self.baseUILabelDelegateDidSet()
+        }
+    }
+    
+    open func baseUILabelDelegateDidSet() {}
+    
 }

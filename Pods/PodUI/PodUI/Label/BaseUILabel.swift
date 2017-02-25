@@ -88,14 +88,14 @@ public class BaseUILabel: UILabel, UIGestureRecognizerDelegate {
     func setActiveState() {
         if !allowActiveState { return }
         animate() {
-            self.delegate?.active()
+            self.delegate?.active?()
             self.backgroundColor = self.activeBackgroundColor
         }
     }
     func setInactiveState() {
         if !allowActiveState { return }
         animate() {
-            self.delegate?.inactive()
+            self.delegate?.inactive?()
             self.backgroundColor = self.inactiveBackgroundColor
             
         }
@@ -109,13 +109,9 @@ public class BaseUILabel: UILabel, UIGestureRecognizerDelegate {
     // MARK: - Touch -
     override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        if let url = willLinkIntercept(touches.first?.location(in: self)) {
-            if !(delegate?.interceptUrl(url) ?? false) {
-//                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            }
-            return
+        if !willConsumeLocationTap(touches.first?.location(in: self)) {
+            setActiveState()
         }
-        setActiveState()
     }
     override open func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
@@ -126,8 +122,18 @@ public class BaseUILabel: UILabel, UIGestureRecognizerDelegate {
         return true
     }
     
+    open func willConsumeLocationTap(_ point: CGPoint?) -> Bool {
+        if let url = willLinkIntercept(point) {
+            if !(delegate?.interceptUrl?(url) ?? false) {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+            return true
+        }
+        return false
+    }
+    
     // MARK: - Links -
-    fileprivate func willLinkIntercept(_ point: CGPoint?) -> URL? {
+    open func willLinkIntercept(_ point: CGPoint?) -> URL? {
         guard var location = point, let attrText = self.attributedText else { return nil }
         
         // Are there actually links?

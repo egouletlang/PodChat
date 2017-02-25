@@ -14,6 +14,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>PodSpeech.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>PodUI.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -32,27 +37,32 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>102E8132B5D4650F2CA1DABD24F5A1AD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>18F575F58AC9E06491270430B1E016BC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>2381B7ABC7B7AD2DF159F3E4B4CB3033</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>493D2377416720436BF2168F77842B6B</key>
+		<key>26BF67B50ECC69AC04D7D03A6FE48FB6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4CCC70EF1F772462F702E21319037537</key>
+		<key>933245D005C980B46B5E4B0494A4B67F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5D3A3773A048F547C415B0882A3290BD</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>64EA1AB14B1E8EA97AFC29064FA35CFB</key>
+		<key>EEC86058D7F3DBAF67993DB71D0262D0</key>
 		<dict>
 			<key>primary</key>
 			<true/>

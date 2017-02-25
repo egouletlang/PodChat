@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		44F5C31287E93488C83968EC /* Pods_PodChatTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D7299A30D5B2F562CA7CE56 /* Pods_PodChatTests.framework */; };
+		6B0393E71E61EF7E0024638A /* BaseChatViewConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B0393E61E61EF7E0024638A /* BaseChatViewConfig.swift */; };
+		6B269B0A1E57EEB900CA3754 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6B269B091E57EEB900CA3754 /* Assets.xcassets */; };
+		6B4249071E620BBE00C33FD8 /* BaseChatOverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4249061E620BBE00C33FD8 /* BaseChatOverlayController.swift */; };
 		6B4294861DFB9ADD00AA2BFB /* PodChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6B42947C1DFB9ADD00AA2BFB /* PodChat.framework */; };
 		6B42948B1DFB9ADD00AA2BFB /* PodChatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B42948A1DFB9ADD00AA2BFB /* PodChatTests.swift */; };
 		6B42948D1DFB9ADD00AA2BFB /* PodChat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B42947F1DFB9ADD00AA2BFB /* PodChat.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -36,6 +39,9 @@
 
 /* Begin PBXFileReference section */
 		42C072CE289066EC765207A6 /* Pods-PodChatTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PodChatTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-PodChatTests/Pods-PodChatTests.release.xcconfig"; sourceTree = "<group>"; };
+		6B0393E61E61EF7E0024638A /* BaseChatViewConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseChatViewConfig.swift; sourceTree = "<group>"; };
+		6B269B091E57EEB900CA3754 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6B4249061E620BBE00C33FD8 /* BaseChatOverlayController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseChatOverlayController.swift; sourceTree = "<group>"; };
 		6B42947C1DFB9ADD00AA2BFB /* PodChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PodChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B42947F1DFB9ADD00AA2BFB /* PodChat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PodChat.h; sourceTree = "<group>"; };
 		6B4294801DFB9ADD00AA2BFB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -126,6 +132,9 @@
 				6B6DA86F1DFBF73A000C8758 /* BaseChatInputViewDelegate.swift */,
 				6BB824F31DFC066F00318A43 /* BaseChatUIViewController.swift */,
 				6BB824F51DFC0A5300318A43 /* BaseChatViewDelegate.swift */,
+				6B269B091E57EEB900CA3754 /* Assets.xcassets */,
+				6B0393E61E61EF7E0024638A /* BaseChatViewConfig.swift */,
+				6B4249061E620BBE00C33FD8 /* BaseChatOverlayController.swift */,
 			);
 			path = PodChat;
 			sourceTree = "<group>";
@@ -210,7 +219,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0810;
-				LastUpgradeCheck = 0810;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Etienne Goulet-Lang";
 				TargetAttributes = {
 					6B42947B1DFB9ADD00AA2BFB = {
@@ -249,6 +258,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6B269B0A1E57EEB900CA3754 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,11 +355,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				6BB824F61DFC0A5300318A43 /* BaseChatViewDelegate.swift in Sources */,
+				6B0393E71E61EF7E0024638A /* BaseChatViewConfig.swift in Sources */,
 				6B42949B1DFBA28E00AA2BFB /* BaseChatCVCell.swift in Sources */,
 				6B4294991DFB9C6400AA2BFB /* BaseChatModel.swift in Sources */,
 				6BC52A8A1DFBD3A800155B9B /* RHSChatCVCell.swift in Sources */,
 				6B6DA8701DFBF73A000C8758 /* BaseChatInputViewDelegate.swift in Sources */,
 				6BC52A8E1DFBF26900155B9B /* BaseChatInputView.swift in Sources */,
+				6B4249071E620BBE00C33FD8 /* BaseChatOverlayController.swift in Sources */,
 				6BC52A841DFBCF5200155B9B /* BaseChatCVCellDelegate.swift in Sources */,
 				6B4294971DFB9BA800AA2BFB /* BaseChatView.swift in Sources */,
 				6BB824F41DFC067000318A43 /* BaseChatUIViewController.swift in Sources */,
