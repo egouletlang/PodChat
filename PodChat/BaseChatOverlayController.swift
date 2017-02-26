@@ -12,7 +12,11 @@ import BaseUtils
 
 open class BaseChatOverlayController: OverlayPresentationUIViewController, BaseChatViewDelegate, BaseChatCVCellDelegate, BaseUILabelDelegate {
     
-    open let chatView = BaseChatView(frame: CGRect.zero)
+    open func createConfig() -> BaseUIViewConfig {
+        return BaseChatViewConfig()
+    }
+    
+    open var chatView: BaseChatView!
     
     override open func initialize() {
         super.initialize()
@@ -21,8 +25,10 @@ open class BaseChatOverlayController: OverlayPresentationUIViewController, BaseC
     
     override open func createLayout() {
         super.createLayout()
-        self.view.addSubview(chatView)
         
+        chatView = BaseChatView(config: self.createConfig())
+        
+        self.view.addSubview(chatView)
         chatView.baseUIViewDelegate = self
         chatView.baseChatViewDelegate = self
         chatView.baseUILabelDelegate = self
@@ -39,20 +45,6 @@ open class BaseChatOverlayController: OverlayPresentationUIViewController, BaseC
     
     open override func shouldRespondToKeyboard() -> Bool {
         return true
-    }
-    
-    open func send(text: String, index: IndexPath) {
-        ThreadHelper.delay(sec: 0.5, mainThread: true) {
-            self.chatView.messageSent(indexPath: index)
-        }
-    }
-    
-    open func messageSent(indexPath: IndexPath) {
-        self.chatView.messageSent(indexPath: indexPath)
-    }
-    
-    open func addServerMessage(text: String?, models: [BaseRowModel]?) {
-        self.chatView.addModel(model: BaseChatModel.buildServerMessage(text: text, models: models))
     }
     
     override open var effectiveTopLayoutGuide: CGFloat {

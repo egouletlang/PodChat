@@ -8,6 +8,8 @@
 
 import Foundation
 
+@objc
 public protocol BaseChatInputViewDelegate: NSObjectProtocol {
-    func submit(text: String)
+    @objc optional func submit(text: String)
+    @objc optional func audio(on: Bool)
 }

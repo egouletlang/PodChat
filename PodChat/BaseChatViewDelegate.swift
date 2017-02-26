@@ -8,6 +8,9 @@
 
 import Foundation
 
+@objc
 public protocol BaseChatViewDelegate: NSObjectProtocol {
-    func send(text: String, index: IndexPath)
+    @objc optional func send(text: String, index: IndexPath)
+    @objc optional func audio(on: Bool)
 }
+

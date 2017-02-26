@@ -12,7 +12,7 @@ import BaseUtils
 
 open class BaseChatUIViewController: BaseUIViewController, BaseChatViewDelegate, BaseChatCVCellDelegate, BaseUILabelDelegate {
     
-    open func createConfig() -> BaseChatViewConfig {
+    open func createConfig() -> BaseUIViewConfig {
         return BaseChatViewConfig()
     }
     
@@ -41,8 +41,6 @@ open class BaseChatUIViewController: BaseUIViewController, BaseChatViewDelegate,
     open override func shouldRespondToKeyboard() -> Bool {
         return true
     }
-    
-    open func send(text: String, index: IndexPath) {}
     
     open func active(view: BaseRowView) {}
     open func tapped(model: BaseRowModel, view: BaseRowView) {}

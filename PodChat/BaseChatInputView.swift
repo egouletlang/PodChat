@@ -13,6 +13,8 @@ import PodSpeech
 
 open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognitionHelperDelegate {
     
+    private static let INITIAL_AUDIO_TEXT = "I'm Listening"
+    
     // MARK: - Initializer with a config object -
     public convenience init(config: BaseChatViewConfig) {
         self.init(frame: CGRect.zero)
@@ -24,6 +26,7 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
     
     // MARK: - UI -
     private let input = BaseUITextField(frame: CGRect.zero)
+    private let label = BaseUILabel(frame: CGRect.zero)
     private let submit = BaseUIImageView(frame: CGRect.zero)
     
     // MARK: - Lifecycle - 
@@ -37,8 +40,19 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
         input.returnKeyType = .send
         input.addTarget(self, action: #selector(BaseChatInputView.textFieldDidChange(_:)), for: .editingChanged)
         
+        self.addSubview(label)
+        label.text = BaseChatInputView.INITIAL_AUDIO_TEXT
+        label.textColor = UIColor.white
+        label.alpha = 0
+        label.backgroundColor = (config as? BaseChatViewConfig)?.sendButtonBackgroundColor ?? UIColor(argb: 0x7B868C)
+        label.padding.left = 13
+        label.padding.top = -2
+        label.padding.right = 40
+        
         self.addSubview(submit)
-        self.addTap(submit, selector: #selector(BaseChatInputView.submitText))
+        self.addTap(submit, selector: #selector(BaseChatInputView.submitTapped))
+        submit.layer.cornerRadius = 15
+        submit.backgroundColor = (config as? BaseChatViewConfig)?.sendButtonBackgroundColor ?? UIColor(argb: 0x7B868C)
         
         self.setSendButtonImage()
         
@@ -47,7 +61,8 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
     
     open override func frameUpdate() {
         super.frameUpdate()
-        input.frame = CGRect(x: 8, y: 8, width: self.frame.width - 24 - 20, height: self.frame.height - 16)
+        input.frame = CGRect(x: 8, y: 8, width: self.frame.width - 24 - 25, height: self.frame.height - 16)
+        label.frame = self.bounds
         submit.frame = CGRect(x: self.frame.width - 38, y: (self.frame.height - 30) / 2, width: 30, height: 30)
     }
     
@@ -56,16 +71,10 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
         input.resignFirstResponder()
     }
     
-    open func setText(text: String) {
-        ThreadHelper.checkedExecuteOnMainThread {
-            self.input.text = text
-        }
-    }
-    
     open weak var baseChatInputViewDelegate: BaseChatInputViewDelegate?
     
     open func submitTapped() {
-        if self.input.text != nil {
+        if self.input.hasText {
             self.submitText()
         } else if (self.config as? BaseChatViewConfig)?.allowAudio ?? false {
             self.detectUtterance()
@@ -75,9 +84,10 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
     open func submitText() {
         let text = self.input.text
         self.input.text = nil
+        self.checkButtonStatus()
         ThreadHelper.executeOnBackgroundThread {
             if let t = text {
-                self.baseChatInputViewDelegate?.submit(text: t)
+                self.baseChatInputViewDelegate?.submit?(text: t)
             }
         }
         
@@ -89,6 +99,17 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
                 if vc != nil {
                     self.baseUIViewDelegate?.presentVC?(vc!, animated: true)
                 } else {
+                    ThreadHelper.executeOnMainThread {
+                        self.label.text = BaseChatInputView.INITIAL_AUDIO_TEXT
+                        
+                        UIView.animate(withDuration: 0.3) {
+                            self.label.alpha = 1
+                        }
+                        
+                        ThreadHelper.executeOnBackgroundThread {
+                            self.baseChatInputViewDelegate?.audio?(on: true)
+                        }
+                    }
                     self.utteranceDetector.start()
                 }
             }
@@ -96,9 +117,23 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
     }
     
     public func SRH_newText(text: String?, final: Bool) {
-        self.input.text = text
-        if final && (config as? BaseChatViewConfig)?.audioAutoSend ?? false {
-            self.submitText()
+        ThreadHelper.executeOnMainThread {
+            self.label.text = text
+            self.input.text = text
+            
+            if final {
+                ThreadHelper.executeOnBackgroundThread {
+                    self.baseChatInputViewDelegate?.audio?(on: false)
+                }
+                UIView.animate(withDuration: 0.3) {
+                    self.label.alpha = 0
+                }
+                if (self.config as? BaseChatViewConfig)?.audioAutoSend ?? false {
+                    self.submitText()
+                } else if final {
+                    self.checkButtonStatus()
+                }
+            }
         }
     }
     
@@ -124,12 +159,16 @@ open class BaseChatInputView: BaseUIView, UITextFieldDelegate, SpeechRecognition
     }
     
     private var hasText = false
-    public func textFieldDidChange(_ textField: UITextField) {
-        
+    
+    private func checkButtonStatus() {
         if hasText != self.input.hasText {
             hasText = self.input.hasText
             self.setSendButtonImage()
         }
+    }
+    
+    public func textFieldDidChange(_ textField: UITextField) {
+        self.checkButtonStatus()
     }
     
 }

@@ -13,6 +13,8 @@ open class BaseChatViewConfig: BaseUIViewConfig {
     
     open var sendBarPrompt = "Say Something"
     
+    open var sendButtonBackgroundColor = UIColor(argb: 0x7B868C)
+    
     open var sendIconAsset = ""
     
     open var allowAudio = true

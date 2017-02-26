@@ -21,10 +21,6 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
     private var chatInputVIew: BaseChatInputView!
     private var models = [BaseChatModel]()
     
-    open func setText(text: String) {
-        self.chatInputVIew.setText(text: text)
-    }
-    
     override open func createAndAddSubviews() {
         super.createAndAddSubviews()
         self.backgroundColor = UIColor(argb: 0xCC444444)
@@ -146,8 +142,12 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
         
         let indexPath = IndexPath(row: self.models.count, section: 0)
         self.addUserMessage(text: text, models: nil)
-        self.baseChatViewDelegate?.send(text: text, index: indexPath)
+        self.baseChatViewDelegate?.send?(text: text, index: indexPath)
     }
+    public func audio(on: Bool) {
+        self.baseChatViewDelegate?.audio?(on: on)
+    }
+    
     open func showTyping(show: Bool) {
         ThreadHelper.executeOnMainThread {
             
