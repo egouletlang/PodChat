@@ -28,15 +28,14 @@ open class BaseChatModel: NSObject {
                     .withLeftHandSide(set: true)
                     .withModels(models: respModels)
     }
-    
     class func buildUserMessage(text: String?, models: [BaseRowModel]?) -> BaseChatModel {
         var respModels = models ?? []
         
         if let t = text {
-            respModels.insert(LabelRowModel().withTitle(str: t.addColor("#FFFFFF")), at: 0)
+            respModels.insert(LabelRowModel().withTitle(str: t.addColor("#FFFFFF")).withBackgroundColor(color: UIColor.clear), at: 0)
         }
         
-        respModels = respModels.map() { $0.withBackgroundColor(color: UIColor.clear) }
+//        respModels = respModels.map() { $0.withBackgroundColor(color: UIColor.clear) }
         
         return BaseChatModel()
             .withLeftHandSide(set: false)
