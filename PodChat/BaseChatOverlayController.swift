@@ -38,7 +38,7 @@ open class BaseChatOverlayController: OverlayPresentationUIViewController, BaseC
     override open func frameUpdate() {
         super.frameUpdate()
         
-        self.chatView.frame = CGRect(x: 0, y: self.effectiveTopLayoutGuide,
+        self.chatView?.frame = CGRect(x: 0, y: self.effectiveTopLayoutGuide,
                                      width: self.view.frame.width,
                                      height: self.effectiveBottomLayoutGuide - self.effectiveTopLayoutGuide)
     }

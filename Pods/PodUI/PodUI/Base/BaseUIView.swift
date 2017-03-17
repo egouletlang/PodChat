@@ -43,11 +43,6 @@ open class BaseUIView: UIView {
     
     open var config: BaseUIViewConfig?
     
-    public init(config: Any) {
-        super.init(frame: CGRect.zero)
-        self.__initialize()
-    }
-    
     override public init(frame: CGRect) {
         super.init(frame: frame)
         self.__initialize()

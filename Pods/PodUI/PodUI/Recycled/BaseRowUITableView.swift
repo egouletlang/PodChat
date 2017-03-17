@@ -228,6 +228,14 @@ open class BaseRowUITableView: UITableView, UITableViewDataSource, UITableViewDe
         }
     }
     
+    open func insertModels(models: [BaseRowModel]) {
+        self.correctSizes(models: models)
+        ThreadHelper.checkedExecuteOnMainThread() {
+            self.allModels.insert(contentsOf: models, at: 0)
+            self.filter(scope: self.currScope, text: self.currSearch)
+        }
+    }
+    
     
     
     override open func becomeFirstResponder() -> Bool {

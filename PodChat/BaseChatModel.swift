@@ -25,6 +25,7 @@ open class BaseChatModel: NSObject {
         respModels = respModels.map() { $0.withBackgroundColor(color: UIColor.clear) }
         
         return BaseChatModel()
+                    .withHasText(set: text != nil)
                     .withLeftHandSide(set: true)
                     .withModels(models: respModels)
     }
@@ -38,8 +39,14 @@ open class BaseChatModel: NSObject {
 //        respModels = respModels.map() { $0.withBackgroundColor(color: UIColor.clear) }
         
         return BaseChatModel()
+            .withHasText(set: text != nil)
             .withLeftHandSide(set: false)
             .withModels(models: respModels)
+    }
+    class func buildCarousel(models: [BaseRowModel]?) -> BaseChatModel {
+        return BaseChatModel()
+            .withScroller()
+            .withModels(models: models ?? [])
     }
     
     
@@ -47,6 +54,15 @@ open class BaseChatModel: NSObject {
         case Sent
         case Sending
         case Failed
+    }
+    
+    open var hasText = true
+    open func withHasText(set: Bool) -> BaseChatModel {
+        self.setHasText(set: set)
+        return self
+    }
+    open func setHasText(set: Bool) {
+        self.hasText = set
     }
     
     open var status = Status.Sending
@@ -60,13 +76,27 @@ open class BaseChatModel: NSObject {
         self.size = size
     }
     
-    open var isLeftHandSide = false
+    public enum Style: String {
+        case LHS = "LHS"
+        case RHS = "RHS"
+        case SCROLL = "SCROLL"
+    }
+    
+    open var style = Style.LHS
     open func withLeftHandSide(set: Bool) -> BaseChatModel {
         self.setLeftHandSide(set: set)
         return self
     }
     open func setLeftHandSide(set: Bool) {
-        self.isLeftHandSide = set
+        self.style = set ? .LHS : .RHS
+    }
+    
+    open func withScroller() -> BaseChatModel {
+        self.setScroller()
+        return self
+    }
+    open func setScroller() {
+        self.style = .SCROLL
     }
     
     open var models = [BaseRowModel]()
@@ -79,10 +109,9 @@ open class BaseChatModel: NSObject {
     }
     
     open func isLhs() -> Bool {
-        return self.isLeftHandSide
+        return self.style == .LHS
     }
-    
     open func getId() -> String {
-        return self.isLeftHandSide ? "LHS" : "RHS"
+        return self.style.rawValue
     }
 }

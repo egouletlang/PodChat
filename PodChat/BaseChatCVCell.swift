@@ -11,16 +11,18 @@ import PodUI
 
 private let MAX_WIDTH: CGFloat = 260
 private let STATUS_SIZE: CGFloat = 20
-private let PADDING: CGFloat = 5
+private let PADDING: CGFloat = 8
 
 open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate, BaseUILabelDelegate {
     
     //MARK: - Constructors -
     open class func build(model: BaseChatModel) -> BaseChatCVCell {
-        if model.isLhs() {
+        if model.style == .LHS {
             return LHSChatCVCell(frame: CGRect.zero)
-        } else {
+        } else if model.style == .RHS {
             return RHSChatCVCell(frame: CGRect.zero)
+        } else {
+            return CarouselChatCVCell(frame: CGRect.zero)
         }
     }
     
@@ -41,7 +43,7 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate, BaseUILabe
     open func createLayout() {
         self.contentView.addSubview(chatBubble)
         
-        chatBubble.layer.cornerRadius = 15
+        chatBubble.layer.cornerRadius = self.chatBubbleCornerRadius()
         chatBubble.backgroundColor = self.chatBubbleBkgColor()
         chatBubble.passThroughDefault = true
         chatBubble.clipsToBounds = true
@@ -67,6 +69,9 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate, BaseUILabe
     }
     
     //MARK: - LHS vs RHS methods -
+    open func chatBubbleCornerRadius() -> CGFloat {
+        return 15
+    }
     open func chatBubbleBkgColor() -> UIColor {
         return UIColor.white
     }
@@ -81,7 +86,7 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate, BaseUILabe
     //MARK: - Helper Methods -
     private func getCells(models: [BaseRowModel]) -> [BaseRowView] {
         return models.map() { (model) in
-            let row = BaseRowModel.build(id: model.getId())
+            let row = BaseRowModel.build(id: model.getId(), forMeasurement: false)
             row.baseRowViewDelegate = self
             row.baseUILabelDelegate = self
             return row
@@ -97,38 +102,46 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate, BaseUILabe
     }
     open func setData(model: BaseChatModel) {
         let cells = self.getCells(models: model.models)
+        let padding = self.getPadding(model: model)
         if cells.count > 1 {
             let container = UIView(frame: CGRect.zero)
             container.clipsToBounds = true
             container.layer.cornerRadius = 5
             container.backgroundColor = UIColor.white
             self.chatBubble.addSubview(container)
-            container.frame = CGRect(x: 8,
-                                     y: (model.models.first?.height ?? 0) + 8,
-                                     width: model.size.width - 16,
-                                     height: model.size.height - ((model.models.first?.height ?? 0) + 16))
+            container.frame = CGRect(x: padding,
+                                     y: (model.models.first?.height ?? 0) + padding,
+                                     width: model.size.width - (2 * padding),
+                                     height: model.size.height - ((model.models.first?.height ?? 0) + (2 * padding)))
         }
         
         let containerSize = model.size
-        var height: CGFloat = 8
+        var height: CGFloat = padding
         for (cell, model) in zip(cells, model.models) {
             cell.setData(model: model)
-            cell.frame = CGRect(x: 8, y: height, width: containerSize.width - 16, height: model.height)
+            cell.frame = CGRect(x: padding, y: height, width: containerSize.width - (2 * padding), height: model.height)
             height += model.height
             self.chatBubble.addSubview(cell)
         }
         
         self.status.frame = self.chatStatusFrame(model: model)
         self.chatBubble.frame = self.chatBubbleFrame(model: model)
-        
-        
-        
     }
-    open func updateSize(model: BaseChatModel) {
+    
+    open func getPadding(model: BaseChatModel) -> CGFloat {
+        return PADDING
+    }
+    
+    open func getMaxWidth(model: BaseChatModel, width: CGFloat) -> CGFloat {
+        let w = MAX_WIDTH - (2 * self.getPadding(model: model))
+        return width > w ? w : width
+    }
+    
+    open func updateSize(model: BaseChatModel, width: CGFloat) {
         model.models = model.models.map() { $0.withPadding(l: 0, t: 0, r: 0, b: 0) }
         
-        let availWidth = MAX_WIDTH - 16
-        
+        let padding = self.getPadding(model: model)
+        let availWidth = self.getMaxWidth(model: model, width: width)
         let cells = self.getCells(models: model.models)
         
         // first pass to find max width
@@ -144,7 +157,7 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate, BaseUILabe
             model.height = cell.getDesiredSize(model: model, forWidth: reqWidth).height
             height += model.height
         }
-        model.setSize(size: CGSize(width: reqWidth + 16, height: height + 16))
+        model.setSize(size: CGSize(width: reqWidth + (2 * padding), height: height + (2 * padding)))
     }
     
     //MARK: - BaseRowViewDelegate Methods -

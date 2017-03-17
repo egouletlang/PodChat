@@ -206,6 +206,16 @@ open class BaseRowModel: NSObject {
     }
     
     
+    open var cornerRadius: CGFloat = 0
+    open func withCornerRadius(radius: CGFloat) -> BaseRowModel {
+        self.setCornerRadius(radius: radius)
+        return self
+    }
+    open func setCornerRadius(radius: CGFloat) {
+        self.cornerRadius = radius
+    }
+    
+    
     // MARK: - Tag -
     open var tag: String?
     open func withTag(tag: String) -> BaseRowModel {

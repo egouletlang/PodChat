@@ -18,6 +18,10 @@ class RHSChatCVCell: BaseChatCVCell {
         return UIColor(argb: 0x7BC7B9)
     }
     
+    override func getPadding(model: BaseChatModel) -> CGFloat {
+        return model.hasText ? super.getPadding(model: model) : 0
+    }
+    
     override func setData(model: BaseChatModel) {
         super.setData(model: model)
         self.status.isHidden = model.status != .Sent

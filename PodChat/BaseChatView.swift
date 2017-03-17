@@ -10,8 +10,12 @@ import Foundation
 import PodUI
 import BaseUtils
 
+private class QRUICollectionReusableView: UICollectionViewCell {
+    
+}
+
 private let DEFAULT_INSETS = UIEdgeInsetsMake(3, 5, 3, 5)
-open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BaseChatCVCellDelegate, BaseChatInputViewDelegate, BaseUILabelDelegate {
+open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, BaseChatCVCellDelegate, BaseChatInputViewDelegate, BaseUILabelDelegate, BaseRowViewDelegate, QuickReplyCollectionDelegate {
     
     open weak var baseChatViewDelegate: BaseChatViewDelegate?
     open weak var baseChatCVCellDelegate: BaseChatCVCellDelegate?
@@ -19,6 +23,7 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
     private var collectionView: BaseUICollectionView!
     private var chatTypeStatus = BaseUIImageView(frame: CGRect.zero)
     private var chatInputVIew: BaseChatInputView!
+    private var quickRepliesView = QuickReplyCollection(frame: CGRect.zero)
     private var models = [BaseChatModel]()
     
     override open func createAndAddSubviews() {
@@ -29,10 +34,15 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
         layout.scrollDirection = UICollectionViewScrollDirection.vertical
         layout.minimumLineSpacing = 3
         layout.minimumInteritemSpacing = 0
+        layout.footerReferenceSize = CGSize(width: 0, height: 40)
+        
         collectionView = BaseUICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         
         collectionView.register(LHSChatCVCell.classForCoder(), forCellWithReuseIdentifier: "LHS")
         collectionView.register(RHSChatCVCell.classForCoder(), forCellWithReuseIdentifier: "RHS")
+        collectionView.register(CarouselChatCVCell.classForCoder(), forCellWithReuseIdentifier: "SCROLL")
+        
+        collectionView.register(QRUICollectionReusableView.classForCoder(), forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: "QR")
         
         collectionView.scrollsToTop = false
         collectionView.delegate = self
@@ -44,14 +54,21 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
         collectionView.backgroundColor = UIColor.clear
         self.addTap(collectionView, selector: #selector(BaseChatView.dismissKeyboard))
         
-        self.addSubview(chatTypeStatus)
         chatTypeStatus.setContentMode(contentMode: .scaleAspectFit)
         chatTypeStatus.loadAsset(name: "sending_indicator")
+        chatTypeStatus.alpha = 0
+        
+//        self.addSubview(quickRepliesView)
         
         chatInputVIew = BaseChatInputView(config: self.config)
         self.addSubview(chatInputVIew)
         chatInputVIew.backgroundColor = UIColor(argb: 0xFFFFFF)
         chatInputVIew.baseChatInputViewDelegate = self
+        
+        quickRepliesView.quickReplyCollectionDelegate = self
+        quickRepliesView.backgroundColor = UIColor.clear
+        quickRepliesView.alpha = 1
+        self.addTap(quickRepliesView, selector: #selector(BaseChatView.dismissKeyboard))
         
     }
     
@@ -59,8 +76,11 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
         super.frameUpdate()
         
         self.chatInputVIew.frame = CGRect(x: 0, y: self.frame.height - 50, width: self.frame.width, height: 50)
-        self.chatTypeStatus.frame = CGRect(x: 0, y: self.frame.height - 50, width: 80, height: 40)
+        self.quickRepliesView.frame = CGRect(x: -10, y: 0, width: self.frame.width - 10, height: 40)
+        self.chatTypeStatus.frame = CGRect(x: 0, y: 0, width: 80, height: 40)
         self.collectionView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height - 50)
+        
+        (self.collectionView.collectionViewLayout as? BaseUICollectionViewFlowLayout)?.footerReferenceSize.width = self.frame.width
         
         collectionView?.collectionViewLayout.invalidateLayout()
         self.collectionView?.reloadData()
@@ -92,24 +112,62 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
         return CGSize(width: 2, height: 2)
     }
     
+    public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        var reusableview = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionFooter,
+                                                                           withReuseIdentifier: "QR", for: indexPath) as! UICollectionViewCell
+        reusableview.contentView.clipsToBounds = true
+        
+        chatTypeStatus.removeFromSuperview()
+        reusableview.contentView.addSubview(chatTypeStatus)
+        
+        quickRepliesView.removeFromSuperview()
+        reusableview.contentView.addSubview(quickRepliesView)
+        
+        return reusableview
+    }
+    
     open func addModel(model: BaseChatModel) {
-        BaseChatCVCell().updateSize(model: model)
         ThreadHelper.checkedExecuteOnMainThread {
+            BaseChatCVCell.build(model: model).updateSize(model: model, width: self.frame.width)
+            
+            print(self.models.count)
             let indexPath = IndexPath(row: self.models.count, section: 0)
+            print(indexPath)
             
             self.models.append(model)
+            print(self.models.count)
             self.collectionView.insertItems(at: [indexPath])
-            self.collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+            
+            if self.collectionView.contentSize.height > self.collectionView.frame.height {
+                self.collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
+                self.collectionView.contentOffset.y += 40
+            }
         }
     }
     
     open func addServerMessage(text: String?, models: [BaseRowModel]?) {
         if (text == nil && (models == nil || models!.isEmpty)) { return }
-        self.addModel(model: BaseChatModel.buildServerMessage(text: text, models: models))
+        
+        if (models?.first as? CarouselRowModel) != nil {
+            self.addModel(model: BaseChatModel.buildCarousel(models: models))
+        } else {
+            self.addModel(model: BaseChatModel.buildServerMessage(text: text, models: models))
+        }
+        
     }
     open func addUserMessage(text: String?, models: [BaseRowModel]?) {
         if (text == nil && (models == nil || models!.isEmpty)) { return }
-        self.addModel(model: BaseChatModel.buildUserMessage(text: text, models: models))
+        
+        if (models?.first as? CarouselRowModel) != nil {
+            self.addModel(model: BaseChatModel.buildCarousel(models: models))
+        } else {
+            self.addModel(model: BaseChatModel.buildUserMessage(text: text, models: models))
+        }
+        
+    }
+    open func addUI(models: [BaseRowModel]?) {
+        if ((models == nil || models!.isEmpty)) { return }
+        self.addModel(model: BaseChatModel.buildCarousel(models: models))
     }
     
     open func messageSent(indexPath: IndexPath) {
@@ -149,25 +207,62 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
     }
     
     open func showTyping(show: Bool) {
+        let offset: CGFloat = (show) ? 0 : 40
         ThreadHelper.executeOnMainThread {
             
-            UIView.animate(withDuration: 0.3) {
-                if (show) {
-                    self.chatTypeStatus.frame = CGRect(x: 0, y: self.frame.height - 90, width: 80, height: 40)
-                    self.collectionView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height - 90)
-                } else {
-                    self.chatTypeStatus.frame = CGRect(x: 0, y: self.frame.height - 50, width: 80, height: 40)
-                    self.collectionView.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height - 50)
-                }
-            }
-                self.collectionView.scrollToItem(at: IndexPath(item: self.models.count - 1, section: 0), at: .bottom, animated: false)
+//            UIView.animate(withDuration: 0.3) {
+//                self.chatTypeStatus.frame.origin.y = offset
+//                self.quickRepliesView.frame.origin.y = 40 - offset
+//                
 //            }
-            
-            
-            
+            UIView.animate(withDuration: 0.3) {
+                self.chatTypeStatus.alpha = show ? 1 : 0
+                self.quickRepliesView.alpha = show ? 0 : 1
+                
+            }
+//            if show {
+//                self.collectionView.contentOffset.y += 40
+//            }
+            //            }
         }
+        print("offset \(offset)")
     }
     
+    func changeFrames() {
+        
+    }
+    
+    open func addQuickReplies(qrs: [QuickReply]) {
+        self.quickRepliesView.setModels(models: qrs.flatMap() { (qr: QuickReply) -> BaseRowModel? in
+            
+            var model = ImageLabelRowModel()
+                .with(lhsImage: qr.icon)
+                .with(lhsCircle: true)
+                .with(lhsSize: CGSize(width: qr.icon != nil ? 30 : 0, height: 30))
+            
+            
+            if qr.icon != nil && qr.title != nil {
+                model = model
+                    .with(lhsMargins: Rect<CGFloat>(0, 0, 3, 0))
+                    .with(rhsMargins: Rect<CGFloat>(10, 0, 0, 0))
+            } else if qr.icon != nil {
+                model = model
+                    .with(lhsMargins: Rect<CGFloat>(0, 0, 0, 0))
+                    .with(rhsMargins: Rect<CGFloat>(0, 0, 0, 0))
+            } else {
+                model = model
+                    .with(lhsMargins: Rect<CGFloat>(0, 0, 5, 0))
+                    .with(rhsMargins: Rect<CGFloat>(5, 0, 0, 0))
+            }
+            return model
+                .withTitle(str: qr.title)
+                .withPadding(l: 0, t: 0, r: 0, b: 0)
+                .withBackgroundColor(color: UIColor.clear)
+                .withBorderColor(color: UIColor.red)
+                .withCornerRadius(radius: 15)
+                .withClickResponse(obj: qr)
+        })
+    }
     
     //MARK: - BaseUILabelDelegate Methods -
     open weak var baseUILabelDelegate: BaseUILabelDelegate?
@@ -179,6 +274,16 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
     }
     public func inactive() {
         self.baseUILabelDelegate?.inactive?()
+    }
+    public func quickReply(model: BaseRowModel, view: BaseRowView) {
+        if let qr = model.clickResponse as? QuickReply {
+            
+            if let postback = qr.postback {
+                self.submit(text: postback)
+            }
+            qr.callback(qr)
+            self.quickRepliesView.setModels(models: [])
+        }
     }
     
 }

@@ -19,6 +19,10 @@ class LHSChatCVCell: BaseChatCVCell {
         return CGRect(x: 10, y: 0, width: model.size.width, height: model.size.height)
     }
     
+    override func getPadding(model: BaseChatModel) -> CGFloat {
+        return model.hasText ? super.getPadding(model: model) : 0
+    }
+    
     override open func chatBubbleBkgColor() -> UIColor {
         return UIColor(argb: 0xF8F8F8)
     }

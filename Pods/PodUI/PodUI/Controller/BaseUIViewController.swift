@@ -97,7 +97,7 @@ open class BaseUIViewController: UIViewController, BaseUIViewDelegate {
             self.automaticallyAdjustsScrollViewInsets = false
             self.view.backgroundColor = defaultBackgroundColor()
             if addDismissButton() && (self.navigationController?.viewControllers.count == 1) {
-                self.setNavigationItem(text: "Cancel", target: self, selector: #selector(BaseUIViewController.dismissVC), left: true)
+                self.setNavigationItem(text: self.dismissButtonCopy(), target: self, selector: #selector(BaseUIViewController.dismissVC), left: true)
             }
             
             createLayout()
@@ -209,6 +209,10 @@ open class BaseUIViewController: UIViewController, BaseUIViewDelegate {
     
     open func addDismissButton() -> Bool {
         return true
+    }
+    
+    open func dismissButtonCopy() -> String {
+        return "Cancel"
     }
     
     open func shouldRespondToKeyboard() -> Bool {

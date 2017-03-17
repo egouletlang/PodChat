@@ -117,10 +117,10 @@ open class CarouselRowView: BaseRowView, UICollectionViewDataSource, UICollectio
         self.baseRowViewDelegate?.longPressed(model: model, view: view)
     }
     public func submitArgsValidityChanged(valid: Bool) {
-        self.baseRowViewDelegate?.submitArgsValidityChanged(valid: valid)
+        self.baseRowViewDelegate?.submitArgsValidityChanged?(valid: valid)
     }
     public func submitArgsChanged() {
-        self.baseRowViewDelegate?.submitArgsChanged()
+        self.baseRowViewDelegate?.submitArgsChanged?()
     }
     
     override open func getDesiredSize(model: BaseRowModel, forWidth w: CGFloat) -> CGSize {

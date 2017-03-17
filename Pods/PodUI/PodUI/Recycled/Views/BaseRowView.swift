@@ -112,6 +112,8 @@ open class BaseRowView: BaseUIView {
         
         self.backgroundColor = model.backgroundColor ?? DEFAULT_INACTIVE_BKG_COLOR
         
+        self.layer.cornerRadius = model.cornerRadius
+        
         for layer in borders {
             layer.backgroundColor = model.borderColor?.cgColor ?? DEFAULT_BORDER_COLOR.cgColor
         }

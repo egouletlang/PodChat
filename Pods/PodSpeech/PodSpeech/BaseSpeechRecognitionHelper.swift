@@ -32,13 +32,6 @@ open class BaseSpeechRecognitionHelper: NSObject, SFSpeechRecognizerDelegate {
     // MARK: - Report Partial Recognition Results -
     open var shouldReportPartialResults = false
     
-    // MARK: - locale that should be used to do the speech recognition -
-    open var locale = "en-US" {
-        didSet {
-            self.reset()
-        }
-    }
-    
     // MARK: - Delegate -
     weak open var speechRecognitionHelperDelegate: SpeechRecognitionHelperDelegate?
     
@@ -90,7 +83,7 @@ open class BaseSpeechRecognitionHelper: NSObject, SFSpeechRecognizerDelegate {
     open func reset() {
         stop()
         
-        self.speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: locale))
+        self.speechRecognizer = SFSpeechRecognizer(locale: Locale.init(identifier: SpeechState.instance.locale))
         self.speechRecognizer?.delegate = self
         
         if (SFSpeechRecognizer.authorizationStatus() == .authorized) {

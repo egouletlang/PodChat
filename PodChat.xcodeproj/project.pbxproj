@@ -17,6 +17,8 @@
 		6B4294971DFB9BA800AA2BFB /* BaseChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4294961DFB9BA800AA2BFB /* BaseChatView.swift */; };
 		6B4294991DFB9C6400AA2BFB /* BaseChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B4294981DFB9C6400AA2BFB /* BaseChatModel.swift */; };
 		6B42949B1DFBA28E00AA2BFB /* BaseChatCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B42949A1DFBA28E00AA2BFB /* BaseChatCVCell.swift */; };
+		6B65D5311E6A4013008D4CAD /* CarouselChatCVCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B65D5301E6A4013008D4CAD /* CarouselChatCVCell.swift */; };
+		6B65D5441E6A9C67008D4CAD /* QuickReplyCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B65D5431E6A9C67008D4CAD /* QuickReplyCollection.swift */; };
 		6B6DA8701DFBF73A000C8758 /* BaseChatInputViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6DA86F1DFBF73A000C8758 /* BaseChatInputViewDelegate.swift */; };
 		6BB824F41DFC067000318A43 /* BaseChatUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BB824F31DFC066F00318A43 /* BaseChatUIViewController.swift */; };
 		6BB824F61DFC0A5300318A43 /* BaseChatViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BB824F51DFC0A5300318A43 /* BaseChatViewDelegate.swift */; };
@@ -51,6 +53,8 @@
 		6B4294961DFB9BA800AA2BFB /* BaseChatView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseChatView.swift; sourceTree = "<group>"; };
 		6B4294981DFB9C6400AA2BFB /* BaseChatModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseChatModel.swift; sourceTree = "<group>"; };
 		6B42949A1DFBA28E00AA2BFB /* BaseChatCVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseChatCVCell.swift; sourceTree = "<group>"; };
+		6B65D5301E6A4013008D4CAD /* CarouselChatCVCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CarouselChatCVCell.swift; sourceTree = "<group>"; };
+		6B65D5431E6A9C67008D4CAD /* QuickReplyCollection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickReplyCollection.swift; sourceTree = "<group>"; };
 		6B6DA86F1DFBF73A000C8758 /* BaseChatInputViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseChatInputViewDelegate.swift; sourceTree = "<group>"; };
 		6BB824F31DFC066F00318A43 /* BaseChatUIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseChatUIViewController.swift; sourceTree = "<group>"; };
 		6BB824F51DFC0A5300318A43 /* BaseChatViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseChatViewDelegate.swift; sourceTree = "<group>"; };
@@ -120,6 +124,7 @@
 		6B42947E1DFB9ADD00AA2BFB /* PodChat */ = {
 			isa = PBXGroup;
 			children = (
+				6B65D5341E6A89D9008D4CAD /* QuickReply */,
 				6B42947F1DFB9ADD00AA2BFB /* PodChat.h */,
 				6B4294801DFB9ADD00AA2BFB /* Info.plist */,
 				6B4294961DFB9BA800AA2BFB /* BaseChatView.swift */,
@@ -128,6 +133,7 @@
 				6BC52A831DFBCF5200155B9B /* BaseChatCVCellDelegate.swift */,
 				6BC52A871DFBD2D000155B9B /* LHSChatCVCell.swift */,
 				6BC52A891DFBD3A800155B9B /* RHSChatCVCell.swift */,
+				6B65D5301E6A4013008D4CAD /* CarouselChatCVCell.swift */,
 				6BC52A8D1DFBF26900155B9B /* BaseChatInputView.swift */,
 				6B6DA86F1DFBF73A000C8758 /* BaseChatInputViewDelegate.swift */,
 				6BB824F31DFC066F00318A43 /* BaseChatUIViewController.swift */,
@@ -146,6 +152,14 @@
 				6B42948C1DFB9ADD00AA2BFB /* Info.plist */,
 			);
 			path = PodChatTests;
+			sourceTree = "<group>";
+		};
+		6B65D5341E6A89D9008D4CAD /* QuickReply */ = {
+			isa = PBXGroup;
+			children = (
+				6B65D5431E6A9C67008D4CAD /* QuickReplyCollection.swift */,
+			);
+			name = QuickReply;
 			sourceTree = "<group>";
 		};
 		76765A911B6A019C71A9D909 /* Frameworks */ = {
@@ -356,6 +370,7 @@
 			files = (
 				6BB824F61DFC0A5300318A43 /* BaseChatViewDelegate.swift in Sources */,
 				6B0393E71E61EF7E0024638A /* BaseChatViewConfig.swift in Sources */,
+				6B65D5441E6A9C67008D4CAD /* QuickReplyCollection.swift in Sources */,
 				6B42949B1DFBA28E00AA2BFB /* BaseChatCVCell.swift in Sources */,
 				6B4294991DFB9C6400AA2BFB /* BaseChatModel.swift in Sources */,
 				6BC52A8A1DFBD3A800155B9B /* RHSChatCVCell.swift in Sources */,
@@ -363,6 +378,7 @@
 				6BC52A8E1DFBF26900155B9B /* BaseChatInputView.swift in Sources */,
 				6B4249071E620BBE00C33FD8 /* BaseChatOverlayController.swift in Sources */,
 				6BC52A841DFBCF5200155B9B /* BaseChatCVCellDelegate.swift in Sources */,
+				6B65D5311E6A4013008D4CAD /* CarouselChatCVCell.swift in Sources */,
 				6B4294971DFB9BA800AA2BFB /* BaseChatView.swift in Sources */,
 				6BB824F41DFC067000318A43 /* BaseChatUIViewController.swift in Sources */,
 				6BC52A881DFBD2D000155B9B /* LHSChatCVCell.swift in Sources */,
