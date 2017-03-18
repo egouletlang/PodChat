@@ -18,8 +18,8 @@ open class BaseUICollection: BaseUIView, UICollectionViewDataSource, UICollectio
     open weak var baseUICollectionDelegate: BaseUICollectionDelegate?
     
     open var collectionView: BaseUICollectionView!
-    private var allModels = [BaseRowModel]()
-    private var filteredModels = [BaseRowModel]()
+    open var allModels = [BaseRowModel]()
+    open var filteredModels = [BaseRowModel]()
     
     private var currScope: String?
     private var currSearch: String?
@@ -80,7 +80,7 @@ open class BaseUICollection: BaseUIView, UICollectionViewDataSource, UICollectio
     private func correctSizes(models: [BaseRowModel]) {
         for m in models {
             if CGSize.zero.equalTo(m.size) {
-                let cell = BaseRowModel.build(id: m.getId())
+                let cell = BaseRowModel.build(id: m.getId(), forMeasurement: true)
                 m.size = cell.getDesiredSize(model: m, forWidth: self.frame.width)
             }
         }
@@ -93,11 +93,7 @@ open class BaseUICollection: BaseUIView, UICollectionViewDataSource, UICollectio
         }
     }
     
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return filteredModels.count
-    }
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
+    open func createCollectionViewCell(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let model = filteredModels.get(indexPath.item),
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: model.getId(), for: indexPath) as? BaseRowCVCell {
             
@@ -109,6 +105,13 @@ open class BaseUICollection: BaseUIView, UICollectionViewDataSource, UICollectio
         }
         return UICollectionViewCell()
     }
+    
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return filteredModels.count
+    }
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        return self.createCollectionViewCell(collectionView, cellForItemAt: indexPath)
+    }
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         if let model = filteredModels.get(indexPath.item) {
@@ -118,9 +121,15 @@ open class BaseUICollection: BaseUIView, UICollectionViewDataSource, UICollectio
         return CGSize(width: 1, height: 1)
     }
     
+    open func interceptTapped(model: BaseRowModel, view: BaseRowView) -> Bool {
+        return false
+    }
+    
     public func active(view: BaseRowView) {}
     public func tapped(model: BaseRowModel, view: BaseRowView) {
-        self.baseUICollectionDelegate?.tapped(model: model, view: view)
+        if !self.interceptTapped(model: model, view: view) {
+            self.baseUICollectionDelegate?.tapped(model: model, view: view)
+        }
     }
     public func longPressed(model: BaseRowModel, view: BaseRowView) {
         self.baseUICollectionDelegate?.longPressed(model: model, view: view)

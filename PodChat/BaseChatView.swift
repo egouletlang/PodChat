@@ -113,7 +113,7 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
     }
     
     public func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        var reusableview = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionFooter,
+        let reusableview = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionFooter,
                                                                            withReuseIdentifier: "QR", for: indexPath) as! UICollectionViewCell
         reusableview.contentView.clipsToBounds = true
         

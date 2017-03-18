@@ -24,22 +24,41 @@ open class ImageLabelRowView: LabelRowView {
     override open func frameUpdate() {
         super.frameUpdate()
         
-        let lhsSize = (self.model as? ImageLabelRowModel)?.lhsSize ?? CGSize.zero
+        var lhsSize = (self.model as? ImageLabelRowModel)?.lhsSize ?? CGSize.zero
         let lhsMargins = (self.model as? ImageLabelRowModel)?.lhsMargins ?? Rect<CGFloat>(0, 0, 0, 0)
         
         let rhsSize = (self.model as? ImageLabelRowModel)?.rhsSize ?? CGSize.zero
         let rhsMargins = (self.model as? ImageLabelRowModel)?.rhsMargins ?? Rect<CGFloat>(0, 0, 0, 0)
+        
+        if let m = (self.model as? ImageLabelRowModel), m.lhsCircle {
+            lhsSize.width -= 4
+            lhsSize.height -= 4
+            self.lhsImageView.layer.cornerRadius = lhsSize.width / 2
+        }
         
         // Set the sizes
         self.lhsImageView.frame.size = lhsSize
         self.rhsImageView.frame.size = rhsSize
         
         self.lhsImageView.frame.origin.x = lhsMargins.left
+        if let m = (self.model as? ImageLabelRowModel), m.lhsCircle {
+            self.lhsImageView.frame.origin.x += 2
+        }
+        
         self.rhsImageView.frame.origin.x = self.contentView.frame.width - rhsSize.width + rhsMargins.left
         
         self.lhsImageView.frame.origin.y = lhsMargins.top
+        if let m = (self.model as? ImageLabelRowModel), m.lhsCircle {
+            self.lhsImageView.frame.origin.y += 2
+        }
         self.rhsImageView.frame.origin.y = lhsMargins.bottom
         
+    }
+    
+    open override func prepareForReuse() {
+        super.prepareForReuse()
+        lhsImageView.clear()
+        rhsImageView.clear()
     }
     
     override open func setData(model: BaseRowModel) {

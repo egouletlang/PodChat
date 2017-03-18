@@ -21,6 +21,15 @@ open class ImageLabelRowModel: LabelRowModel {
         return ID
     }
     
+    open var lhsCircle = false
+    open func with(lhsCircle: Bool) -> ImageLabelRowModel {
+        self.set(lhsCircle: lhsCircle)
+        return self
+    }
+    open func set(lhsCircle: Bool) {
+        self.lhsCircle = lhsCircle
+    }
+    
     // MARK: - LHS View -
     open var lhsImage: String?
     open var lhsSize = CGSize.zero

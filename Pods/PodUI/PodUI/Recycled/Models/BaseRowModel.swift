@@ -12,9 +12,41 @@ import UIKit
 
 private let DEFAULT_PADDING = Rect<CGFloat>(10, 10, 10, 10)
 
+let labelRowView = LabelRowView(frame: CGRect.zero)
+let asynchronousRowView = AsynchronousRowView(frame: CGRect.zero)
+let genericLabelRowView = GenericLabelRowView(frame: CGRect.zero)
+let imageLabelRowView = ImageLabelRowView(frame: CGRect.zero)
+let cardRowView = CardRowView(frame: CGRect.zero)
+let imageRowView = ImageRowView(frame: CGRect.zero)
+let carouselRowView = CarouselRowView(frame: CGRect.zero)
+let tileRowView = TileRowView(frame: CGRect.zero)
+let baseRowView = BaseRowView(frame: CGRect.zero)
+
 open class BaseRowModel: NSObject {
     
-    open class func build(id: String) -> BaseRowView {
+    open class func build(id: String, forMeasurement: Bool) -> BaseRowView {
+        if forMeasurement {
+            if LabelRowModel.isLabelRowModel(id: id) {
+                return labelRowView
+            } else if AsynchronousRowModel.isAsynchronousRowModel(id: id) {
+                return asynchronousRowView
+            } else if GenericLabelRowModel.isGenericLabelRowModel(id: id) {
+                return genericLabelRowView
+            } else if ImageLabelRowModel.isImageLabelRowModel(id: id) {
+                return imageLabelRowView
+            } else if CardRowModel.isCardRowModel(id: id) {
+                return cardRowView
+            } else if ImageRowModel.isImageRowModel(id: id) {
+                return imageRowView
+            } else if CarouselRowModel.isCarouselRowModel(id: id) {
+                return carouselRowView
+            } else if TileRowModel.isTileRowModel(id: id) {
+                return tileRowView
+            }
+            return baseRowView
+        }
+        
+        assert(Thread.isMainThread)
         if LabelRowModel.isLabelRowModel(id: id) {
             return LabelRowView(frame: CGRect.zero)
         } else if AsynchronousRowModel.isAsynchronousRowModel(id: id) {

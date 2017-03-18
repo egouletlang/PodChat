@@ -47,9 +47,9 @@ open class BaseRowCVCell: UICollectionViewCell, BaseRowViewDelegate {
         cell.layer.cornerRadius = 5
         cell.layer.borderColor = UIColor(argb: 0xC3C3C3).cgColor
         cell.layer.borderWidth = 1
-        cell.layer.shadowColor = UIColor.black.cgColor;
-        cell.layer.shadowOffset = CGSize(width: 1, height: 5)
-        cell.layer.shadowOpacity = 0.2
+//        cell.layer.shadowColor = UIColor.black.cgColor;
+//        cell.layer.shadowOffset = CGSize(width: 1, height: 5)
+//        cell.layer.shadowOpacity = 0.2
         cell.baseRowViewDelegate = self
     }
     
@@ -67,6 +67,10 @@ open class BaseRowCVCell: UICollectionViewCell, BaseRowViewDelegate {
     }
     open func setFrame() {
         cell.frameUpdate()
+    }
+    
+    open override func prepareForReuse() {
+        cell.prepareForReuse()
     }
     
     open weak var baseRowCVCellDelegate: BaseRowCVCellDelegate?

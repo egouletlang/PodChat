@@ -10,6 +10,15 @@ import Foundation
 import CoreGraphics
 import UIKit
 
+let labelRowTvCell = LabelRowTVCell(reuseIdentifier: "labelRowTvCell")
+let asyncRowTvCell = AsynchronousRowTVCell(reuseIdentifier: "asyncRowTvCell")
+let genericLabelRowTVCell = GenericLabelRowTVCell(reuseIdentifier: "genericLabelRowTVCell")
+let imageLabelRowTVCell = ImageLabelRowTVCell(reuseIdentifier: "imageLabelRowTVCell")
+let cardRowTVCell = CardRowTVCell(reuseIdentifier: "cardRowTVCell")
+let imageRowTVCell = ImageRowTVCell(reuseIdentifier: "imageRowTVCell")
+let carouselRowTVCell = CarouselRowTVCell(reuseIdentifier: "carouselRowTVCell")
+let baseRowTVCell = BaseRowTVCell(reuseIdentifier: "baseRowTVCell")
+
 open class BaseRowTVCell: UITableViewCell, BaseRowViewDelegate {
     
     public init(reuseIdentifier: String) {
@@ -26,7 +35,27 @@ open class BaseRowTVCell: UITableViewCell, BaseRowViewDelegate {
         return "\(id)_\(width)"
     }
     
-    open class func build(id: String, width: CGFloat) -> BaseRowTVCell {
+    open class func build(id: String, width: CGFloat, forMeasurement: Bool) -> BaseRowTVCell {
+        if forMeasurement {
+            if LabelRowModel.isLabelRowModel(id: id) {
+                return labelRowTvCell
+            } else if AsynchronousRowModel.isAsynchronousRowModel(id: id) {
+                return asyncRowTvCell
+            } else if GenericLabelRowModel.isGenericLabelRowModel(id: id) {
+                return genericLabelRowTVCell
+            } else if ImageLabelRowModel.isImageLabelRowModel(id: id) {
+                return imageLabelRowTVCell
+            } else if CardRowModel.isCardRowModel(id: id) {
+                return cardRowTVCell
+            } else if ImageRowModel.isImageRowModel(id: id) {
+                return imageRowTVCell
+            } else if CarouselRowModel.isCarouselRowModel(id: id) {
+                return carouselRowTVCell
+            }
+             return baseRowTVCell
+        }
+        
+        assert(Thread.isMainThread)
         if LabelRowModel.isLabelRowModel(id: id) {
             return LabelRowTVCell(reuseIdentifier: buildReuseIdentifier(id: id, width: width))
         } else if AsynchronousRowModel.isAsynchronousRowModel(id: id) {

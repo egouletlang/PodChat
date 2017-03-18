@@ -111,8 +111,8 @@ open class BaseUIViewController: UIViewController, BaseUIViewDelegate {
     }
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.didAppear(first: !hasAppearedBefore)
         if !hasAppearedBefore { hasAppearedBefore = true }
-        self.didAppear(first: hasAppearedBefore)
     }
     
     open func initialize() {
@@ -145,7 +145,7 @@ open class BaseUIViewController: UIViewController, BaseUIViewDelegate {
             self.present(vc, animated: true, completion: nil)
         }
     }
-    public func dismissVC(_ animated: Bool) {
+    open func dismissVC(_ animated: Bool) {
         ThreadHelper.checkedExecuteOnMainThread() {
             self.dismiss(animated: true, completion: nil)
         }
@@ -222,7 +222,7 @@ open class BaseUIViewController: UIViewController, BaseUIViewDelegate {
     
     open var keyboardHeight: CGFloat = 0
     open func keyboardWillShow(_ notification: NSNotification) {
-        if let keyboardSize: CGFloat = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue.height {
+        if let keyboardSize: CGFloat = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue.height {
             keyboardHeight = keyboardSize
         }
         UIView.animate(withDuration: 0.3) {

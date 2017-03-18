@@ -77,14 +77,14 @@ open class BaseRowUITableView: UITableView, UITableViewDataSource, UITableViewDe
     open func frameWidthChanged() {
         for m in filteredModels {
             if m.measureHeight {
-                let cell = BaseRowTVCell.build(id: m.getId(), width: self.frame.width)
+                let cell = BaseRowTVCell.build(id: m.getId(), width: self.frame.width, forMeasurement: true)
                 m.height = cell.getDesiredSize(model: m, forWidth: self.frame.width).height
             }
 
         }
         for m in allModels {
             if m.measureHeight {
-                let cell = BaseRowTVCell.build(id: m.getId(), width: self.frame.width)
+                let cell = BaseRowTVCell.build(id: m.getId(), width: self.frame.width, forMeasurement: true)
                 m.height = cell.getDesiredSize(model: m, forWidth: self.frame.width).height
             }
             
@@ -115,7 +115,7 @@ open class BaseRowUITableView: UITableView, UITableViewDataSource, UITableViewDe
         let width = tableView.frame.width
         var cell = tableView.dequeueReusableCell(withIdentifier: BaseRowTVCell.buildReuseIdentifier(id: id, width: width)) as? BaseRowTVCell
         if cell == nil {
-            cell = BaseRowTVCell.build(id: model.getId(), width: width)
+            cell = BaseRowTVCell.build(id: model.getId(), width: width, forMeasurement: false)
             cell!.baseRowTVCellDelegate = self
         }
         
@@ -125,9 +125,8 @@ open class BaseRowUITableView: UITableView, UITableViewDataSource, UITableViewDe
     private func correctSizes(models: [BaseRowModel]) {
         for m in models {
             if m.height == 0 && m.measureHeight {
-                let cell = BaseRowTVCell.build(id: m.getId(), width: self.frame.width)
+                let cell = BaseRowTVCell.build(id: m.getId(), width: self.frame.width, forMeasurement: true)
                 m.height = cell.getDesiredSize(model: m, forWidth: self.frame.width).height
-                print(m.height)
             }
         }
     }

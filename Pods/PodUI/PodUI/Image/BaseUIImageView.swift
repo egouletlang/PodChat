@@ -92,6 +92,10 @@ open class BaseUIImageView: BaseUIView {
         
     }
     
+    open func clear() {
+        self.currLoading = ""
+    }
+    
     /// Load an asset image. The cache will be managed automatically
     open func loadAsset(name: String,
                         transforms: [BaseImageTransform]? = nil,

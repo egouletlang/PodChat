@@ -56,7 +56,7 @@ open class CarouselRowView: BaseRowView, UICollectionViewDataSource, UICollectio
     private func correctSizes(models: [BaseRowModel]) {
         for m in models {
             if m.height == 0 && m.measureHeight {
-                let cell = BaseRowTVCell.build(id: m.getId(), width: self.frame.width)
+                let cell = BaseRowTVCell.build(id: m.getId(), width: self.frame.width, forMeasurement: true)
                 m.height = cell.getDesiredSize(model: m, forWidth: self.frame.width).height
                 print(m.height)
             }

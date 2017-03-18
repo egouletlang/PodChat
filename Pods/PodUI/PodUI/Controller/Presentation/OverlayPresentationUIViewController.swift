@@ -9,6 +9,61 @@
 import Foundation
 import BaseUtils
 
+
+open class OverlayTablePresentationUIViewController: OverlayPresentationUIViewController, BaseRowUITableViewDelegate {
+    
+    open let tableView = BaseRowUITableView(frame: CGRect.zero)
+    private var initialModels = [BaseRowModel]()
+    
+    override open func initialize() {
+        super.initialize()
+        self.requiredSize = UIScreen.main.bounds.insetBy(dx: 20, dy: 20).size
+    }
+    
+    override open func createLayout() {
+        super.createLayout()
+        
+        self.view.addSubview(tableView)
+        tableView.baseRowUITableViewDelegate = self
+        tableView.setModels(models: self.createModels())
+        
+        
+    }
+    
+    override open func frameUpdate() {
+        super.frameUpdate()
+        let top: CGFloat = self.effectiveTopLayoutGuide
+        
+        self.tableView.frame = CGRect(
+            x: 0, y: top,
+            width: self.view.bounds.width,
+            height: self.effectiveBottomLayoutGuide - top)
+    }
+    
+    open func createModels() -> [BaseRowModel] {
+        return self.initialModels
+    }
+    
+    open func tapped(model: BaseRowModel, view: BaseRowView) {}
+    open func longPressed(model: BaseRowModel, view: BaseRowView) {}
+    
+    open override func shouldRespondToKeyboard() -> Bool {
+        return true
+    }
+    
+    override open var effectiveTopLayoutGuide: CGFloat {
+        get {
+            return (self.navigationController != nil) ? (navBarHeight) : 0
+        }
+    }
+    override open var effectiveBottomLayoutGuide: CGFloat {
+        get {
+            return self.view.frame.height - keyboardHeight
+        }
+    }
+}
+
+
 open class OverlayPresentationUIViewController: BaseUIViewController {
     
     //MARK: - Navigation Items Callbacks -
