@@ -18,6 +18,9 @@ let cardRowTVCell = CardRowTVCell(reuseIdentifier: "cardRowTVCell")
 let imageRowTVCell = ImageRowTVCell(reuseIdentifier: "imageRowTVCell")
 let carouselRowTVCell = CarouselRowTVCell(reuseIdentifier: "carouselRowTVCell")
 let baseRowTVCell = BaseRowTVCell(reuseIdentifier: "baseRowTVCell")
+let singleLineTextInputTVCell = SingleLineTextInputRowTVCell(reuseIdentifier: "singleLineTextInputRowTVCell")
+let multiLineTextInputTVCell = MultiLineTextInputRowTVCell(reuseIdentifier: "multiLineTextInputRowTVCell")
+let genericTextInputRowTVCell = GenericTextInputRowTVCell(reuseIdentifier: "genericTextInputRowTVCell")
 
 open class BaseRowTVCell: UITableViewCell, BaseRowViewDelegate {
     
@@ -51,6 +54,12 @@ open class BaseRowTVCell: UITableViewCell, BaseRowViewDelegate {
                 return imageRowTVCell
             } else if CarouselRowModel.isCarouselRowModel(id: id) {
                 return carouselRowTVCell
+            } else if GenericTextInputRowModel.isGenericTextInputRowModel(id: id) {
+                return genericTextInputRowTVCell
+            } else if SingleLineTextInputRowModel.isSingleLineTextInputRowModel(id: id) {
+                return singleLineTextInputTVCell
+            } else if MultiLineTextInputRowModel.isMultiLineTextInputRowModel(id: id) {
+                return multiLineTextInputTVCell
             }
              return baseRowTVCell
         }
@@ -70,14 +79,13 @@ open class BaseRowTVCell: UITableViewCell, BaseRowViewDelegate {
             return ImageRowTVCell(reuseIdentifier: buildReuseIdentifier(id: id, width: width))
         } else if CarouselRowModel.isCarouselRowModel(id: id) {
             return CarouselRowTVCell(reuseIdentifier: buildReuseIdentifier(id: id, width: width))
+        } else if GenericTextInputRowModel.isGenericTextInputRowModel(id: id) {
+            return GenericTextInputRowTVCell(reuseIdentifier: buildReuseIdentifier(id: id, width: width))
+        } else if SingleLineTextInputRowModel.isSingleLineTextInputRowModel(id: id) {
+            return SingleLineTextInputRowTVCell(reuseIdentifier: buildReuseIdentifier(id: id, width: width))
+        } else if MultiLineTextInputRowModel.isMultiLineTextInputRowModel(id: id) {
+            return MultiLineTextInputRowTVCell(reuseIdentifier: buildReuseIdentifier(id: id, width: width))
         }
-
-//        else if GenericLabelRowModel.isGenericLabelRowModel(id: id) {
-//            return GenericLabelRowTVCell(reuseIdentifier: buildReuseIdentifier(id: id, width: width))
-//        } else if SummaryRowModel.isSummaryRowModel(id: id) {
-//            return SummaryRowTVCell(reuseIdentifier: buildReuseIdentifier(id: id, width: width))
-//        } else if HtmlRowModel.isHtmlRowModel(id: id) {
-//            return HtmlRowTVCell(reuseIdentifier: buildReuseIdentifier(id: id, width: width))
         return BaseRowTVCell(reuseIdentifier: "BASE")
     }
     
@@ -125,6 +133,9 @@ open class BaseRowTVCell: UITableViewCell, BaseRowViewDelegate {
     }
     public func longPressed(model: BaseRowModel, view: BaseRowView) {
         self.baseRowTVCellDelegate?.longPressed(model: model, view: view)
+    }
+    public func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {
+        self.baseRowTVCellDelegate?.swipe(swipe: swipe, model: model, view: view)
     }
     public func submitArgsValidityChanged(valid: Bool) {
         self.baseRowTVCellDelegate?.submitArgsValidityChanged(valid: valid)

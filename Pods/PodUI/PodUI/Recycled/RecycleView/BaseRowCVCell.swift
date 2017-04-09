@@ -30,6 +30,8 @@ open class BaseRowCVCell: UICollectionViewCell, BaseRowViewDelegate {
             return CardRowCVCell(frame: CGRect.zero)
         } else if ImageRowModel.isImageRowModel(id: id) {
             return ImageRowCVCell(frame: CGRect.zero)
+        } else if TileRowModel.isTileRowModel(id: id) {
+            return TileRowCVCell(frame: CGRect.zero)
         }
         
         return BaseRowCVCell(frame: CGRect.zero)
@@ -82,6 +84,9 @@ open class BaseRowCVCell: UICollectionViewCell, BaseRowViewDelegate {
     }
     public func longPressed(model: BaseRowModel, view: BaseRowView) {
         self.baseRowCVCellDelegate?.longPressed(model: model, view: view)
+    }
+    public func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {
+        self.baseRowCVCellDelegate?.swipe(swipe: swipe, model: model, view: view)
     }
     public func submitArgsValidityChanged(valid: Bool) {
         self.baseRowCVCellDelegate?.submitArgsValidityChanged(valid: valid)

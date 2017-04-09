@@ -12,6 +12,7 @@ public protocol BaseRowTVCellDelegate: NSObjectProtocol {
     func active(view: BaseRowView)
     func tapped(model: BaseRowModel, view: BaseRowView)
     func longPressed(model: BaseRowModel, view: BaseRowView)
+    func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView)
     func submitArgsValidityChanged(valid: Bool)
     func submitArgsChanged()
 }

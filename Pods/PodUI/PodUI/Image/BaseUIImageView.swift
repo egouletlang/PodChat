@@ -31,7 +31,13 @@ open class BaseUIImageView: BaseUIView {
         imageView.contentMode = contentMode
     }
     
-    open var padding = Rect<CGFloat>(0, 0, 0, 0)
+    open var padding = Rect<CGFloat>(0, 0, 0, 0) {
+        didSet {
+            ThreadHelper.checkedExecuteOnMainThread {
+                self.frameUpdate()
+            }
+        }
+    }
     
     // MARK - Load Image Logic -
     private var currLoading = ""

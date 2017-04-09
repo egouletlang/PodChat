@@ -14,9 +14,6 @@ import BaseUtils
 private let APPLE_WEB_DATA_SCHEME = "applewebdata"
 private let DORADO_CLIENT_SCHEME = "dorado"
 
-
-// dorado://client_action?{}
-
 open class BaseUIWebView: UIWebView, UIWebViewDelegate {
     
     public init() {

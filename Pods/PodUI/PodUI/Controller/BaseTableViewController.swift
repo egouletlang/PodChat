@@ -13,7 +13,7 @@ import BaseUtils
 
 
 
-open class BaseTableViewController: BaseUIViewController, BaseRowUITableViewDelegate, UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating {
+open class BaseTableViewController: BaseUIViewController, BaseRowUITableViewDelegate, CustomRowViewBuilderDelegate, UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating {
     
     convenience public init(models: [BaseRowModel]) {
         self.init()
@@ -30,6 +30,7 @@ open class BaseTableViewController: BaseUIViewController, BaseRowUITableViewDele
         super.createLayout()
         
         self.view.addSubview(tableView)
+        tableView.customCellDelegate = self
         tableView.baseRowUITableViewDelegate = self
         tableView.setModels(models: self.createModels())
         
@@ -63,8 +64,13 @@ open class BaseTableViewController: BaseUIViewController, BaseRowUITableViewDele
         return self.initialModels
     }
     
+    open func getOrBuildCell(tableView: BaseRowUITableView, model: BaseRowModel) -> BaseRowTVCell? {
+        return nil
+    }
+    
     open func tapped(model: BaseRowModel, view: BaseRowView) {}
     open func longPressed(model: BaseRowModel, view: BaseRowView) {}
+    open func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {}
     
     public func willPresentSearchController(_ searchController: UISearchController) {
         searchMode = true

@@ -13,6 +13,7 @@ import CoreGraphics
 public protocol BaseRowUITableViewDelegate: NSObjectProtocol {
     func tapped(model: BaseRowModel, view: BaseRowView)
     func longPressed(model: BaseRowModel, view: BaseRowView)
+    func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView)
     @objc optional func newScrollOffset(offset: CGFloat)
     @objc optional func canCollectAndSubmitArgs(set: Bool)
     

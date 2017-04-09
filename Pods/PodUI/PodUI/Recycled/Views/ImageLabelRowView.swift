@@ -64,7 +64,13 @@ open class ImageLabelRowView: LabelRowView {
     override open func setData(model: BaseRowModel) {
         super.setData(model: model)
         if let m = model as? ImageLabelRowModel {
-            self.lhsImageView.load(str: m.lhsImage)
+            
+            if let image = m.lhsImage {
+                self.lhsImageView.load(img: image)
+            } else {
+                self.lhsImageView.load(str: m.lhsImageStr)
+            }
+            
             self.rhsImageView.load(str: m.rhsImage)
         }
     }

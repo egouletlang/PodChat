@@ -13,6 +13,7 @@ public protocol BaseRowViewDelegate: NSObjectProtocol {
     func active(view: BaseRowView)
     func tapped(model: BaseRowModel, view: BaseRowView)
     func longPressed(model: BaseRowModel, view: BaseRowView)
+    func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView)
     
     /// Invoked when isAcceptableLength is fulfilled and when state changes from OK <-> NOK to submit
     @objc optional func submitArgsValidityChanged(valid: Bool)

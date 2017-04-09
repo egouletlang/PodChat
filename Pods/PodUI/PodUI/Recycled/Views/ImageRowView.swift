@@ -52,11 +52,12 @@ open class ImageRowView: BaseRowView {
             cardImageHeight = ratio * w
         }
         
+        (model as? ImageRowModel)?.imageHeight = cardImageHeight
+        
         let cardImageMargins = (model as? ImageRowModel)?.imageMargins ?? Rect<CGFloat>(0, 0, 0, 0)
         
         return CGSize(width: w,
                       height: cardImageHeight + cardImageMargins.top + cardImageMargins.bottom)
         
     }
-    
 }

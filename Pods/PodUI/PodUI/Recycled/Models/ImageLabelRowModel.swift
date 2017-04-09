@@ -31,10 +31,15 @@ open class ImageLabelRowModel: LabelRowModel {
     }
     
     // MARK: - LHS View -
-    open var lhsImage: String?
+    open var lhsImage: UIImage?
+    open var lhsImageStr: String?
     open var lhsSize = CGSize.zero
     open var lhsMargins = Rect<CGFloat>(0, 0, 0, 0)
     
+    open func withImage(_ i: UIImage?) -> ImageLabelRowModel {
+        self.setImage(i)
+        return self
+    }
     open func with(lhsImage i: String?) -> ImageLabelRowModel {
         self.set(lhsImage: i)
         return self
@@ -48,7 +53,7 @@ open class ImageLabelRowModel: LabelRowModel {
         return self
     }
     
-    open func set(lhsImage i: String?) {
+    open func setImage(_ i: UIImage?) {
         self.lhsImage = i
         if i != nil {
             self.lhsSize = CGSize(width: 50, height: 50)
@@ -57,8 +62,16 @@ open class ImageLabelRowModel: LabelRowModel {
             self.lhsSize = CGSize.zero
             self.lhsMargins.right = 0
         }
-        
-        
+    }
+    open func set(lhsImage i: String?) {
+        self.lhsImageStr = i
+        if i != nil {
+            self.lhsSize = CGSize(width: 50, height: 50)
+            self.lhsMargins.right = 10
+        } else {
+            self.lhsSize = CGSize.zero
+            self.lhsMargins.right = 0
+        }
     }
     open func set(lhsSize s: CGSize?) {
         self.lhsSize = s ?? CGSize.zero

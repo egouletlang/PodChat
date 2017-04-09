@@ -13,6 +13,8 @@ import BaseUtils
 
 open class BaseRowUITableView: UITableView, UITableViewDataSource, UITableViewDelegate, BaseRowTVCellDelegate {
     
+    open weak var customCellDelegate: CustomRowViewBuilderDelegate?
+    
     open weak var baseRowUITableViewDelegate: BaseRowUITableViewDelegate?
     
     // MARK: - Initialization -
@@ -113,13 +115,18 @@ open class BaseRowUITableView: UITableView, UITableViewDataSource, UITableViewDe
     func getOrBuildCell(tableView: BaseRowUITableView, model: BaseRowModel) -> BaseRowTVCell {
         let id = model.getId()
         let width = tableView.frame.width
-        var cell = tableView.dequeueReusableCell(withIdentifier: BaseRowTVCell.buildReuseIdentifier(id: id, width: width)) as? BaseRowTVCell
-        if cell == nil {
-            cell = BaseRowTVCell.build(id: model.getId(), width: width, forMeasurement: false)
-            cell!.baseRowTVCellDelegate = self
+        
+        // attempt to dequeue
+        if let cell = tableView.dequeueReusableCell(withIdentifier: BaseRowTVCell.buildReuseIdentifier(id: id, width: width)) as? BaseRowTVCell {
+            return cell
         }
         
-        return cell!
+        // check for custom views
+        let cell =  self.customCellDelegate?.getOrBuildCell(tableView: tableView, model: model) ??
+                    BaseRowTVCell.build(id: model.getId(), width: width, forMeasurement: false)
+        cell.cell.enableSwipe()
+        cell.baseRowTVCellDelegate = self
+        return cell
     }
     
     private func correctSizes(models: [BaseRowModel]) {
@@ -296,6 +303,9 @@ open class BaseRowUITableView: UITableView, UITableViewDataSource, UITableViewDe
     public func longPressed(model: BaseRowModel, view: BaseRowView) {
         self.baseRowUITableViewDelegate?.longPressed(model: model, view: view)
     }
+    public func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {
+        self.baseRowUITableViewDelegate?.swipe(swipe: swipe, model: model, view: view)
+    }
     public func collectArgs() -> [String: AnyObject] {
         var ret = [String: AnyObject]()
         
@@ -326,6 +336,8 @@ open class BaseRowUITableView: UITableView, UITableViewDataSource, UITableViewDe
             }
         }
         
+        print(anythingToSubmit)
+        print(globalCanSubmit)
         if anythingToSubmit {
             self.baseRowUITableViewDelegate?.canCollectAndSubmitArgs?(set: globalCanSubmit)
         }

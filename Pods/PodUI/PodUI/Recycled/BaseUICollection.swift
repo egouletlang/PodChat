@@ -134,6 +134,9 @@ open class BaseUICollection: BaseUIView, UICollectionViewDataSource, UICollectio
     public func longPressed(model: BaseRowModel, view: BaseRowView) {
         self.baseUICollectionDelegate?.longPressed(model: model, view: view)
     }
+    public func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {
+        self.baseUICollectionDelegate?.swipe(swipe: swipe, model: model, view: view)
+    }
     public func submitArgsValidityChanged(valid: Bool) {}
     public func submitArgsChanged() {}
     

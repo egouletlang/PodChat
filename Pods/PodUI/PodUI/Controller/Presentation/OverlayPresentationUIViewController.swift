@@ -46,6 +46,7 @@ open class OverlayTablePresentationUIViewController: OverlayPresentationUIViewCo
     
     open func tapped(model: BaseRowModel, view: BaseRowView) {}
     open func longPressed(model: BaseRowModel, view: BaseRowView) {}
+    open func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {}
     
     open override func shouldRespondToKeyboard() -> Bool {
         return true

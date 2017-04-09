@@ -10,7 +10,11 @@ import Foundation
 import BaseUtils
 
 /// The base UIView relies on updating the component's frame. There is no support of constraints.
-open class BaseUIView: UIView {
+open class BaseUIView: UIView, UIGestureRecognizerDelegate {
+    
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
     
     // MARK: - FirstResponder -
     
@@ -112,6 +116,7 @@ open class BaseUIView: UIView {
     open func addTap(_ view: UIView, selector: Selector) {
         let tapGesture = UITapGestureRecognizer(target: self, action: selector)
         tapGesture.numberOfTapsRequired = 1
+        tapGesture.delegate = self
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(tapGesture)
     }
@@ -119,6 +124,7 @@ open class BaseUIView: UIView {
         let longPressGesture = CustomUILongPressGestureRecognizer(target: self, action: #selector(BaseUIView.longPressDetected(_:)))
         longPressGesture.minimumPressDuration = 0.5
         longPressGesture.selector = selector
+        longPressGesture.delegate = self
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(longPressGesture)
     }

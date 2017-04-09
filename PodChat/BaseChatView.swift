@@ -120,8 +120,11 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
         chatTypeStatus.removeFromSuperview()
         reusableview.contentView.addSubview(chatTypeStatus)
         
-        quickRepliesView.removeFromSuperview()
-        reusableview.contentView.addSubview(quickRepliesView)
+        
+        if (self.config as? BaseChatViewConfig)?.showQuickReplies ?? true {
+            quickRepliesView.removeFromSuperview()
+            reusableview.contentView.addSubview(quickRepliesView)
+        }
         
         return reusableview
     }
@@ -188,6 +191,7 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
     public func longPressed(model: BaseRowModel, view: BaseRowView) {
         self.baseChatCVCellDelegate?.longPressed(model: model, view: view)
     }
+    public func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {}
     
     public func dismissKeyboard() {
         self.chatInputVIew.dismiss()

@@ -37,6 +37,7 @@ open class CarouselRowView: BaseRowView, UICollectionViewDataSource, UICollectio
         collectionView.register(ImageLabelRowCVCell.classForCoder(), forCellWithReuseIdentifier: ImageLabelRowModel().getId())
         collectionView.register(CardRowCVCell.classForCoder(), forCellWithReuseIdentifier: CardRowModel().getId())
         collectionView.register(ImageRowCVCell.classForCoder(), forCellWithReuseIdentifier: ImageRowModel().getId())
+        collectionView.register(TileRowCVCell.classForCoder(), forCellWithReuseIdentifier: TileRowModel().getId())
         
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -56,7 +57,7 @@ open class CarouselRowView: BaseRowView, UICollectionViewDataSource, UICollectio
     private func correctSizes(models: [BaseRowModel]) {
         for m in models {
             if m.height == 0 && m.measureHeight {
-                let cell = BaseRowTVCell.build(id: m.getId(), width: self.frame.width, forMeasurement: true)
+                let cell = BaseRowCVCell.build(id: m.getId())
                 m.height = cell.getDesiredSize(model: m, forWidth: self.frame.width).height
                 print(m.height)
             }
@@ -68,6 +69,10 @@ open class CarouselRowView: BaseRowView, UICollectionViewDataSource, UICollectio
         if let m = model as? CarouselRowModel {
             self.setModels(models: m.elements)
         }
+    }
+    
+    open override func shouldAddSwipeGestures() -> Bool {
+        return false
     }
     
     open func setModels(models: [BaseRowModel]) {
@@ -96,7 +101,7 @@ open class CarouselRowView: BaseRowView, UICollectionViewDataSource, UICollectio
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: model.getId(), for: indexPath) as? BaseRowCVCell {
             
             cell.baseRowCVCellDelegate = self
-            cell.setData(model: model, forWidth: self.getCellWidth())
+            cell.setData(model: model, forWidth: model.size.width != 0 ? model.size.width : self.getCellWidth())
             cell.setFrame()
         
             return cell
@@ -104,7 +109,11 @@ open class CarouselRowView: BaseRowView, UICollectionViewDataSource, UICollectio
         return UICollectionViewCell()
     }
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: self.getCellWidth(), height: self.frame.height - DEFAULT_INSETS.top - DEFAULT_INSETS.bottom)
+        if let model = models.get(indexPath.item) {
+            return CGSize(width: model.size.width != 0 ? model.size.width : self.getCellWidth(),
+                          height: self.frame.height - DEFAULT_INSETS.top - DEFAULT_INSETS.bottom)
+        }
+        return CGSize(width: 10, height: 10)
     }
     
     public func active(view: BaseRowView) {
@@ -116,6 +125,7 @@ open class CarouselRowView: BaseRowView, UICollectionViewDataSource, UICollectio
     public func longPressed(model: BaseRowModel, view: BaseRowView) {
         self.baseRowViewDelegate?.longPressed(model: model, view: view)
     }
+    public func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {}
     public func submitArgsValidityChanged(valid: Bool) {
         self.baseRowViewDelegate?.submitArgsValidityChanged?(valid: valid)
     }

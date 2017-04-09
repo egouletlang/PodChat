@@ -21,12 +21,17 @@ let imageRowView = ImageRowView(frame: CGRect.zero)
 let carouselRowView = CarouselRowView(frame: CGRect.zero)
 let tileRowView = TileRowView(frame: CGRect.zero)
 let baseRowView = BaseRowView(frame: CGRect.zero)
+let singleTextInputRowView = SingleLineTextInputRowView(frame: CGRect.zero)
+let multiTextInputRowView = MultiLineTextInputRowView(frame: CGRect.zero)
+let genericTextInputRowView = GenericTextInputRowView(frame: CGRect.zero)
 
 open class BaseRowModel: NSObject {
     
     open class func build(id: String, forMeasurement: Bool) -> BaseRowView {
         if forMeasurement {
-            if LabelRowModel.isLabelRowModel(id: id) {
+            if TileRowModel.isTileRowModel(id: id) {
+                return tileRowView
+            } else if LabelRowModel.isLabelRowModel(id: id) {
                 return labelRowView
             } else if AsynchronousRowModel.isAsynchronousRowModel(id: id) {
                 return asynchronousRowView
@@ -40,14 +45,20 @@ open class BaseRowModel: NSObject {
                 return imageRowView
             } else if CarouselRowModel.isCarouselRowModel(id: id) {
                 return carouselRowView
-            } else if TileRowModel.isTileRowModel(id: id) {
-                return tileRowView
+            } else if GenericTextInputRowModel.isGenericTextInputRowModel(id: id) {
+                return genericTextInputRowView
+            } else if SingleLineTextInputRowModel.isSingleLineTextInputRowModel(id: id) {
+                return singleTextInputRowView
+            } else if MultiLineTextInputRowModel.isMultiLineTextInputRowModel(id: id) {
+                return multiTextInputRowView
             }
             return baseRowView
         }
         
         assert(Thread.isMainThread)
-        if LabelRowModel.isLabelRowModel(id: id) {
+        if TileRowModel.isTileRowModel(id: id) {
+            return TileRowView(frame: CGRect.zero)
+        } else if LabelRowModel.isLabelRowModel(id: id) {
             return LabelRowView(frame: CGRect.zero)
         } else if AsynchronousRowModel.isAsynchronousRowModel(id: id) {
             return AsynchronousRowView(frame: CGRect.zero)
@@ -61,8 +72,12 @@ open class BaseRowModel: NSObject {
             return ImageRowView(frame: CGRect.zero)
         } else if CarouselRowModel.isCarouselRowModel(id: id) {
             return CarouselRowView(frame: CGRect.zero)
-        } else if TileRowModel.isTileRowModel(id: id) {
-            return TileRowView(frame: CGRect.zero)
+        } else if GenericTextInputRowModel.isGenericTextInputRowModel(id: id) {
+            return GenericTextInputRowView(frame: CGRect.zero)
+        } else if SingleLineTextInputRowModel.isSingleLineTextInputRowModel(id: id) {
+            return SingleLineTextInputRowView(frame: CGRect.zero)
+        } else if MultiLineTextInputRowModel.isMultiLineTextInputRowModel(id: id) {
+            return MultiLineTextInputRowView(frame: CGRect.zero)
         }
         return BaseRowView(frame: CGRect.zero)
     }
@@ -314,6 +329,13 @@ open class BaseRowModel: NSObject {
     }
     open func setLongPressResponseTo(obj: AnyObject?) {
         self.longPressResponse = obj
+    }
+    
+    open var allowSwipe = true
+    open var swipeModels = [SwipeActionModel]()
+    open func addSwipeModel(model: SwipeActionModel) -> BaseRowModel {
+        self.swipeModels.append(model)
+        return self
     }
     
     // MARK: - Arg Collection -

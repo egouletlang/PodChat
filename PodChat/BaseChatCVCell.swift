@@ -170,6 +170,7 @@ open class BaseChatCVCell: UICollectionViewCell, BaseRowViewDelegate, BaseUILabe
     public func longPressed(model: BaseRowModel, view: BaseRowView) {
         self.baseChatViewDelegate?.longPressed(model: model, view: view)
     }
+    public func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {}
     public func submitArgsValidityChanged(valid: Bool) {}
     public func submitArgsChanged() {}
     

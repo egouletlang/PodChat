@@ -21,4 +21,6 @@ open class BaseChatViewConfig: BaseUIViewConfig {
     open var audioIconAsset = ""
     open var audioAutoSend = true
     
+    open var showQuickReplies = true
+    
 }

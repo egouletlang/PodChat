@@ -14,8 +14,9 @@ private let DEFAULT_ACTIVE_BKG_COLOR = UIColor(rgb: 0xEEEEEE)
 private let DEFAULT_INACTIVE_BKG_COLOR = UIColor(rgb: 0xFFFFFF)
 private let DEFAULT_BORDER_COLOR = UIColor(rgb: 0x7B868C)
 
+private let DELETE_CONTAINER_WIDTH: CGFloat = 80
+
 open class BaseRowView: BaseUIView {
-    
     
     //MARK: - Layout -
     //MARK: --------------------
@@ -37,13 +38,40 @@ open class BaseRowView: BaseUIView {
         return ret
     }()
     
+    fileprivate class CustomTapGestureRecognizer: UITapGestureRecognizer {
+        var index: Int!
+    }
+    
     /// Add subviews to this container, to help with recycling
     open var contentView = BaseUIView(frame: CGRect.zero)
+    open var wrapper = BaseUIView(frame: CGRect.zero)
+    open lazy var deleteContainers: [BaseUILabel] = {
+        var labels = [BaseUILabel]()
+        for var i in (0..<3) {
+            let label = BaseUILabel(frame: CGRect.zero)
+            
+            let tapGesture = CustomTapGestureRecognizer(target: self, action: #selector(BaseRowView.containerTapped(_:)))
+            tapGesture.index = i
+            tapGesture.numberOfTapsRequired = 1
+            label.isUserInteractionEnabled = true
+            label.addGestureRecognizer(tapGesture)
+            labels.append(label)
+        }
+        return labels
+    }()
     
     // MARK: - Lifecycle -
     override open func createAndAddSubviews() {
         super.createAndAddSubviews()
-        self.addSubview(contentView)
+        
+        for deleteView in self.deleteContainers {
+            self.addSubview(deleteView)
+            deleteView.isHidden = true
+        }
+        
+        self.addSubview(wrapper)
+        
+        wrapper.addSubview(contentView)
         contentView.clipsToBounds = true
         contentView.passThroughDefault = true
         
@@ -58,8 +86,26 @@ open class BaseRowView: BaseUIView {
             self.addLongPress(self, selector: "containerLongPressed")
         }
     }
+    open func enableSwipe() {
+        if self.shouldAddSwipeGestures() {
+            let swipeGesture = UIPanGestureRecognizer(target: self, action: #selector(BaseRowView.swiped(_:)))
+            swipeGesture.delegate = self
+            self.addGestureRecognizer(swipeGesture)
+        }
+    }
+    open func shouldAddSwipeGestures() -> Bool {
+        return true
+    }
+    
     override open func frameUpdate() {
         super.frameUpdate()
+        
+        var offset: CGFloat = 1
+        for deleteView in self.deleteContainers {
+            deleteView.frame = CGRect(x: self.frame.width - (offset * DELETE_CONTAINER_WIDTH) - ((offset - 1) * 10),
+                                        y: 0, width: DELETE_CONTAINER_WIDTH, height: self.frame.height)
+            offset += 1
+        }
         
         if let leftPadding = model?.borderPadding.left {
             self.borders[0].frame.size = CGSize(
@@ -89,6 +135,8 @@ open class BaseRowView: BaseUIView {
         self.contentView.frame.size = self.getAvailableSize()
         self.contentView.frame.origin = self.getOffset()
         
+        self.wrapper.frame = self.bounds
+        
     }
     private func getAvailableSize() -> CGSize {
         if let m = model {
@@ -110,7 +158,7 @@ open class BaseRowView: BaseUIView {
     open func setData(model: BaseRowModel) {
         self.model = model
         
-        self.backgroundColor = model.backgroundColor ?? DEFAULT_INACTIVE_BKG_COLOR
+        self.wrapper.backgroundColor = model.backgroundColor ?? DEFAULT_INACTIVE_BKG_COLOR
         
         self.layer.cornerRadius = model.cornerRadius
         
@@ -122,6 +170,28 @@ open class BaseRowView: BaseUIView {
         borders[1].isHidden = !model.borders.top
         borders[2].isHidden = !model.borders.right
         borders[3].isHidden = !model.borders.bottom
+        
+        if let swipeModels = self.model?.swipeModels {
+            maxSwipeX = CGFloat(swipeModels.count) * DELETE_CONTAINER_WIDTH +
+                        CGFloat((swipeModels.count - 1) * 10)
+            
+            var i = 0
+            while (i < 3) {
+                if let m = swipeModels.get(i) {
+                    deleteContainers.get(i)?.backgroundColor = m.color
+                    deleteContainers.get(i)?.labelInformation = m.title
+                    deleteContainers.get(i)?.isHidden = false
+                } else {
+                    deleteContainers.get(i)?.isHidden = true
+                }
+                i += 1
+            }
+            
+        } else {
+            maxSwipeX = 0
+        }
+        
+        self.wrapper.frame.origin.x = self.getOffset().x
     }
     
     // MARK: - Delegate -
@@ -133,7 +203,21 @@ open class BaseRowView: BaseUIView {
     open func containerTapped(_ sender: UITapGestureRecognizer) {
         self.baseRowViewDelegate?.active(view: self)
         if let m = self.model, m.clickResponse != nil {
-            self.baseRowViewDelegate?.tapped(model: m, view: self)
+            if let customTap = sender as? CustomTapGestureRecognizer {
+                if let swipeModel = m.swipeModels.get(customTap.index) {
+                    self.baseRowViewDelegate?.swipe(swipe: swipeModel, model: m, view: self)
+                }
+            } else {
+                
+                if self.wrapper.frame.origin.x == 0 {
+                    self.baseRowViewDelegate?.tapped(model: m, view: self)
+                } else {
+                    UIView.animate(withDuration: 0.3) {
+                        self.wrapper.frame.origin.x = 0
+                    }
+                }
+                
+            }
         }
     }
     open func containerLongPressed() {
@@ -149,6 +233,41 @@ open class BaseRowView: BaseUIView {
     }
     open func longPressed(location: CGPoint) -> Bool {
         return self.frame.contains(location)
+    }
+    
+    private var initialTransX: CGFloat = 0
+    private var initialViewX: CGFloat = 0
+    private var maxSwipeX: CGFloat = 0
+    open func swiped(_ gesture: UIPanGestureRecognizer) {
+        if self.model?.swipeModels.count ?? 0 == 0 { return }
+        
+        let translation = gesture.translation(in: self)
+        if gesture.state == .began {
+            initialTransX = translation.x
+            initialViewX = self.wrapper.frame.origin.x
+        } else if gesture.state == .changed {
+            let translation = initialTransX - translation.x
+            self.wrapper.frame.origin.x = initialViewX - translation
+            
+            if self.wrapper.frame.origin.x < -self.maxSwipeX {
+                self.wrapper.frame.origin.x = -self.maxSwipeX
+            } else if self.wrapper.frame.origin.x > 0 {
+                self.wrapper.frame.origin.x = 0
+            }
+            
+        } else if gesture.state == .ended {
+            if self.wrapper.frame.origin.x < -maxSwipeX / 2 {
+                UIView.animate(withDuration: 0.3) {
+                    self.wrapper.frame.origin.x = -self.maxSwipeX
+                }
+            } else {
+                UIView.animate(withDuration: 0.3) {
+                    self.wrapper.frame.origin.x = 0
+                }
+            }
+            
+            
+        }
     }
     
     // MARK: - Recycling -

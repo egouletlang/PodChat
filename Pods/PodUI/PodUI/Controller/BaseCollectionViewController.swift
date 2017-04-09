@@ -60,6 +60,7 @@ open class BaseCollectionViewController: BaseUIViewController, BaseUICollectionD
     
     open func tapped(model: BaseRowModel, view: BaseRowView) {}
     open func longPressed(model: BaseRowModel, view: BaseRowView) {}
+    open func swipe(swipe: SwipeActionModel, model: BaseRowModel, view: BaseRowView) {}
     
     public func willPresentSearchController(_ searchController: UISearchController) {
         searchMode = true
