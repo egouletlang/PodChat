@@ -198,14 +198,19 @@ open class BaseChatView: BaseUIView, UICollectionViewDataSource, UICollectionVie
     }
     
     public func submit(text: String) {
+        self.submit(text: text, displayText: text)
+    }
+    
+    public func submit(text: String, displayText: String) {
         if (text.isEmpty) {
             return
         }
         
         let indexPath = IndexPath(row: self.models.count, section: 0)
-        self.addUserMessage(text: text, models: nil)
+        self.addUserMessage(text: displayText, models: nil)
         self.baseChatViewDelegate?.send?(text: text, index: indexPath)
     }
+    
     public func audio(on: Bool) {
         self.baseChatViewDelegate?.audio?(on: on)
     }
