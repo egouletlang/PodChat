@@ -1,10 +1,10 @@
 PODS:
-  - BaseUtils (1.0.45)
-  - PodImage (1.0.28):
+  - BaseUtils (1.0.46)
+  - PodImage (1.0.29):
     - BaseUtils
-  - PodSpeech (1.0.13):
+  - PodSpeech (1.0.14):
     - BaseUtils
-  - PodUI (1.0.31):
+  - PodUI (1.0.32):
     - BaseUtils
     - PodImage
 
@@ -14,10 +14,10 @@ DEPENDENCIES:
   - PodUI
 
 SPEC CHECKSUMS:
-  BaseUtils: c3ba54e68b885d2ea6014e98b982de53b1872206
-  PodImage: 99f732ae7716f2f1faaa1bfd60819c24b91c9dd9
-  PodSpeech: 21ec839b82847d9d12a51462b52f1a501ff7d9ee
-  PodUI: 4b1a1347e41f96a06064adfbc9fb5a32ec4868ce
+  BaseUtils: 5ac76703480293607db04e13398590b8dd325ce7
+  PodImage: a233e274286ca567c73b00faf0ba0b6f3ac2bb8b
+  PodSpeech: 288be50b57359c46056630e5898169f0fb07b734
+  PodUI: fc7f06f05dd9920b9e9fc3a748b63fbff3efa794
 
 PODFILE CHECKSUM: ecebeb65b17ec502e8f4c3a3a96c91fbf1937a11
 

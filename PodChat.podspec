@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.ios.deployment_target = '10.0'
 
   s.name         = "PodChat"
-  s.version      = "1.0.15"
+  s.version      = "1.0.16"
   s.summary      = "PodChat classes"
   s.description  = <<-DESC
   A bunch of classes i have found useful for PodChat
