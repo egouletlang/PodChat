@@ -4,15 +4,17 @@
 
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
-    "23D188F75D066BBD18140E4F68AC0946F67A44B2" : 9223372036854775807,
+    "9C2F9A5724F1E8CA33FD77C18AC21844AD67E3E3" : 9223372036854775807,
     "BF3B5ED4755471DF69721C95E12BC273B2DF1951" : 9223372036854775807,
-    "2486A081FE891B51EA073F6D6EA8AF1C5DE5B52F" : 9223372036854775807
+    "2486A081FE891B51EA073F6D6EA8AF1C5DE5B52F" : 9223372036854775807,
+    "23D188F75D066BBD18140E4F68AC0946F67A44B2" : 9223372036854775807
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "0570AA1E-F892-4D9F-A1D5-D7C3B3BAA24F",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
-    "23D188F75D066BBD18140E4F68AC0946F67A44B2" : "PodChat\/",
+    "9C2F9A5724F1E8CA33FD77C18AC21844AD67E3E3" : "..",
     "BF3B5ED4755471DF69721C95E12BC273B2DF1951" : "BaseUtils\/",
-    "2486A081FE891B51EA073F6D6EA8AF1C5DE5B52F" : "PodUI\/"
+    "2486A081FE891B51EA073F6D6EA8AF1C5DE5B52F" : "PodUI\/",
+    "23D188F75D066BBD18140E4F68AC0946F67A44B2" : "PodChat\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "PodChat",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,
@@ -27,6 +29,11 @@
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/egouletlang\/PodUI.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "2486A081FE891B51EA073F6D6EA8AF1C5DE5B52F"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/doradoex.visualstudio.com\/dorado\/_git\/client",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "9C2F9A5724F1E8CA33FD77C18AC21844AD67E3E3"
     },
     {
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/egouletlang\/BaseUtils.git",
